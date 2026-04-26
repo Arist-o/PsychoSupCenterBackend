@@ -1,10 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using MediatR;
+using Microsoft.Extensions.Logging;
 
-namespace Application.Common.Behaviors
+namespace PsychoSupCenterBackend.Application.Common.Behaviors;
+
+public sealed class LoggingBehavior<TRequest, TResponse>(
+    ILogger<LoggingBehavior<TRequest, TResponse>> logger)
+    : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : notnull
 {
-    internal class LoggingBehavior
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
     {
+        var requestName = typeof(TRequest).Name;
+
+        logger.LogInformation("[MediatR] Handling {RequestName}", requestName);
+
+        var response = await next();
+
+        logger.LogInformation("[MediatR] Handled {RequestName}", requestName);
+
+        return response;
     }
 }

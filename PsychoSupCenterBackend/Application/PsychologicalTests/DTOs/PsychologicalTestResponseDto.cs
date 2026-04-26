@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+namespace PsychoSupCenterBackend.Application.PsychologicalTests.DTOs;
 
-namespace Application.PsychologicalTests.DTOs
-{
-    internal class PsychologicalTestResponseDto
-    {
-    }
-}
+public sealed record PsychologicalTestResponseDto(
+    Guid Id,
+    Guid AppointmentId,
+    string TestType,
+    string? ResultJson,
+    int ScoreTotal,
+    DateTime TakenAt
+);

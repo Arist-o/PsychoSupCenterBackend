@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+namespace PsychoSupCenterBackend.Application.DoctorServices.DTOs;
 
-namespace Application.DoctorServices.DTOs
-{
-    internal class DoctorServiceResponseDto
-    {
-    }
-}
+public sealed record DoctorServiceResponseDto(
+    Guid Id,
+    Guid DoctorProfileId,
+    string ServiceName,
+    decimal Price
+);

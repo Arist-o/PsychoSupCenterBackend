@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using PsychoSupCenterBackend.Domain.Enums;
 
-namespace Application.Appointments.DTOs
-{
-    internal class UpdateAppointmentDto
-    {
-    }
-}
+namespace PsychoSupCenterBackend.Application.Appointments.DTOs;
+
+public sealed record UpdateAppointmentDto(
+    DateTime ScheduledAt,
+    int DurationMinutes,
+    AppointmentStatus Status,
+    string Type,
+    string? Notes
+);

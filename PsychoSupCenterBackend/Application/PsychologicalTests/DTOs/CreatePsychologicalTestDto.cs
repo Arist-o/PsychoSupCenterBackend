@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace PsychoSupCenterBackend.Application.PsychologicalTests.DTOs;
 
-namespace Application.PsychologicalTests.DTOs
-{
-    internal class CreatePsychologicalTestDto
-    {
-    }
-}
+public sealed record CreatePsychologicalTestDto(
+    Guid AppointmentId,
+    string TestType,
+    string? ResultJson,
+    int ScoreTotal
+);

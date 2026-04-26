@@ -1,10 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using PsychoSupCenterBackend.Domain.Enums;
 
-namespace Application.Chat.DTOs
-{
-    internal class ChatMessageResponseDto
-    {
-    }
-}
+namespace PsychoSupCenterBackend.Application.Chat.DTOs;
+
+public sealed record ChatMessageResponseDto(
+    Guid Id,
+    Guid ChatRoomId,
+    Guid SenderId,
+    string SenderName,
+    string Content,
+    MessageType Type,
+    bool IsRead,
+    DateTime SentAt,
+    DateTime? EditedAt,
+    bool IsDeleted
+);

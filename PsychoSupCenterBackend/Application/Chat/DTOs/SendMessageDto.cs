@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using PsychoSupCenterBackend.Domain.Enums;
 
-namespace Application.Chat.DTOs
-{
-    internal class SendMessageDto
-    {
-    }
-}
+namespace PsychoSupCenterBackend.Application.Chat.DTOs;
+
+public sealed record SendMessageDto(
+    Guid ChatRoomId,
+    Guid SenderId,
+    string Content,
+    MessageType Type = MessageType.Text
+);

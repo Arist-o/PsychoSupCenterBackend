@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+namespace PsychoSupCenterBackend.Application.DoctorServices.DTOs;
 
-namespace Application.DoctorServices.DTOs
-{
-    internal class UpdateDoctorServiceDto
-    {
-    }
-}
+public sealed record UpdateDoctorServiceDto(
+    string ServiceName,
+    decimal Price
+);

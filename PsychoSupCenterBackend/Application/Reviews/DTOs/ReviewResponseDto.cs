@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace PsychoSupCenterBackend.Application.Reviews.DTOs;
 
-namespace Application.Reviews.DTOs
-{
-    internal class ReviewResponseDto
-    {
-    }
-}
+public sealed record ReviewResponseDto(
+    Guid Id,
+    Guid DoctorProfileId,
+    Guid PatientProfileId,
+    Guid AppointmentId,
+    int Rating,
+    string? Comment, 
+    bool IsAnonymous,
+    DateTime CreatedAt
+);

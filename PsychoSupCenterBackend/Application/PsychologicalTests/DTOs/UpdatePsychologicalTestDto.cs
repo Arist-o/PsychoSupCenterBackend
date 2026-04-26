@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace PsychoSupCenterBackend.Application.PsychologicalTests.DTOs;
 
-namespace Application.PsychologicalTests.DTOs
-{
-    internal class UpdatePsychologicalTestDto
-    {
-    }
-}
+public sealed record UpdatePsychologicalTestDto(
+    string? ResultJson,
+    int ScoreTotal
+);

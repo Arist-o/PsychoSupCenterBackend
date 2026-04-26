@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using PsychoSupCenterBackend.Domain.Enums;
 
-namespace Application.Billing.DTOs
-{
-    internal class ProcessPaymentDto
-    {
-    }
-}
+namespace PsychoSupCenterBackend.Application.Billing.DTOs;
+
+public sealed record ProcessPaymentDto(
+    Guid BillingId,
+    PaymentMethod PaymentMethod 
+);

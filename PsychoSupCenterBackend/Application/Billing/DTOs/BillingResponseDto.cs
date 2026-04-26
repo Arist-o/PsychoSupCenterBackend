@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using PsychoSupCenterBackend.Domain.Enums;
 
-namespace Application.Billing.DTOs
-{
-    internal class BillingResponseDto
-    {
-    }
-}
+namespace PsychoSupCenterBackend.Application.Billing.DTOs;
+
+public sealed record BillingResponseDto(
+    Guid Id,
+    Guid DoctorServiceId,
+    string ServiceName,
+    decimal Amount,
+    PaymentStatus PaymentStatus,
+    DateTime CreatedAt,
+    DateTime? PaidAt
+);

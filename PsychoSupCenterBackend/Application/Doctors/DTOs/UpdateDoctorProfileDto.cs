@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+namespace PsychoSupCenterBackend.Application.Doctors.DTOs;
 
-namespace Application.Doctors.DTOs
-{
-    internal class UpdateDoctorProfileDto
-    {
-    }
-}
+public sealed record UpdateDoctorProfileDto(
+    string? Bio,
+    DateTime CareerStartDate
+);

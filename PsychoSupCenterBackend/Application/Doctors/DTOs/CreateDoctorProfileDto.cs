@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace PsychoSupCenterBackend.Application.Doctors.DTOs;
 
-namespace Application.Doctors.DTOs
-{
-    internal class CreateDoctorProfileDto
-    {
-    }
-}
+public sealed record CreateDoctorProfileDto(
+    string? Bio,
+    DateTime CareerStartDate
+);

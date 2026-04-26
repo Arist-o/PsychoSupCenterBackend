@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+namespace PsychoSupCenterBackend.Application.DoctorAvailabilities.DTOs;
 
-namespace Application.DoctorAvailabilities.DTOs
-{
-    internal class DoctorAvailabilityResponseDto
-    {
-    }
-}
+public sealed record DoctorAvailabilityResponseDto(
+    Guid Id,
+    Guid DoctorProfileId,
+    DayOfWeek Day,
+    TimeSpan StartTime,
+    TimeSpan EndTime
+);

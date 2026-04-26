@@ -1,10 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using PsychoSupCenterBackend.Domain.Enums;
 
-namespace Application.Doctors.DTOs
-{
-    internal class DoctorProfileResponseDto
-    {
-    }
-}
+namespace PsychoSupCenterBackend.Application.Doctors.DTOs;
+
+public sealed record DoctorProfileResponseDto(
+    Guid Id,
+    Guid UserId,
+    string FirstName,
+    string LastName,
+    string Email,
+    string? PhotoUrl,
+    string? Bio,
+    DateTime CareerStartDate,
+    int ExperienceYears,
+    DoctorStatus Status,
+    double AverageRating,
+    DateTime UpdatedAt
+);

@@ -1,10 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace PsychoSupCenterBackend.Application.Reviews.DTOs;
 
-namespace Application.Reviews.DTOs
-{
-    internal class UpdateReviewDto
-    {
-    }
-}
+public sealed record UpdateReviewDto(int Rating, string? Comment, bool IsAnonymous);

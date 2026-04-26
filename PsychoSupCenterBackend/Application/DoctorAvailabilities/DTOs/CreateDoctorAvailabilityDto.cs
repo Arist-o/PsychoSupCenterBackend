@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+namespace PsychoSupCenterBackend.Application.DoctorAvailabilities.DTOs;
 
-namespace Application.DoctorAvailabilities.DTOs
-{
-    internal class CreateDoctorAvailabilityDto
-    {
-    }
-}
+public sealed record CreateDoctorAvailabilityDto(
+    Guid DoctorProfileId,
+    DayOfWeek Day,
+    TimeSpan StartTime,
+    TimeSpan EndTime
+);

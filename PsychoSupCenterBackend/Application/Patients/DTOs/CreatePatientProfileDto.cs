@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using PsychoSupCenterBackend.Domain.Enums;
 
-namespace Application.Patients.DTOs
-{
-    internal class CreatePatientProfileDto
-    {
-    }
-}
+namespace PsychoSupCenterBackend.Application.Patients.DTOs;
+
+public sealed record CreatePatientProfileDto(
+    PatientType Type,
+    string? MilitaryId,
+    string? EmergencyContact,
+    DateTime DateOfBirth
+);

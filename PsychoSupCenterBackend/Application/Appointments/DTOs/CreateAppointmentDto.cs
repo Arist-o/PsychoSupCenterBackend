@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace PsychoSupCenterBackend.Application.Appointments.DTOs;
 
-namespace Application.Appointments.DTOs
-{
-    internal class CreateAppointmentDto
-    {
-    }
-}
+public sealed record CreateAppointmentDto(
+    Guid DoctorProfileId,
+    Guid PatientProfileId,
+    Guid DoctorServiceId,
+    DateTime ScheduledAt,
+    int DurationMinutes,
+    string Type,
+    string? Notes
+);

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+namespace PsychoSupCenterBackend.Application.DoctorCertificates.DTOs;
 
-namespace Application.DoctorCertificates.DTOs
-{
-    internal class DoctorCertificateResponseDto
-    {
-    }
-}
+public sealed record DoctorCertificateResponseDto(
+    Guid Id,
+    Guid DoctorProfileId,
+    string CertificateUrl,
+    DateTime AddedAt
+);
