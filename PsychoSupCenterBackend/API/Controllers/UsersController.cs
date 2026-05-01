@@ -1,173 +1,75 @@
-﻿
-using Application.Users.DTOs;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PsychoSupCenterBackend.Application.Users.Commands;
-using PsychoSupCenterBackend.Application.Users.DTOs;
 using PsychoSupCenterBackend.Application.Users.Queries;
+using PsychoSupCenterBackend.Application.Users.DTOs;
 
-namespace API.Controllers;
+namespace PsychoSupCenterBackend.API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class UsersController(ISender sender) : ControllerBase
+public class UsersController : BaseApiController
 {
-    // ── Auth endpoints (public) ───────────────────────────────────
-
-    /// <summary>POST /api/users/register — Реєстрація нового користувача</summary>
+    [AllowAnonymous]
     [HttpPost("register")]
-    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Register(
-        [FromBody] RegisterDto dto,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<AuthResponseDto>> Register([FromBody] RegisterDto dto)
     {
         var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-        var result = await sender.Send(
-            new RegisterUser.Command(dto, ipAddress),
-            cancellationToken);
-
-        return result.IsSuccess
-            ? Ok(result.Value)
-            : BadRequest(new { error = result.Error });
+        return HandleResult(await Mediator.Send(new RegisterUser.Command(dto, ipAddress)));
     }
 
-    /// <summary>POST /api/users/login — Вхід у систему</summary>
+    [AllowAnonymous]
     [HttpPost("login")]
-    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Login(
-        [FromBody] LoginDto dto,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginDto dto)
     {
         var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-        var result = await sender.Send(
-            new LoginUser.Command(dto, ipAddress),
-            cancellationToken);
-
-        return result.IsSuccess
-            ? Ok(result.Value)
-            : BadRequest(new { error = result.Error });
+        return HandleResult(await Mediator.Send(new LoginUser.Command(dto, ipAddress)));
     }
 
-    /// <summary>POST /api/users/refresh — Оновлення access token через refresh token</summary>
-    [HttpPost("refresh")]
-    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Refresh(
-        [FromBody] RefreshTokenDto dto,
-        CancellationToken cancellationToken)
+    [AllowAnonymous]
+    [HttpPost("refresh-token")]
+    public async Task<ActionResult<AuthResponseDto>> RefreshToken([FromBody] RefreshTokenCommand.Command command)
     {
-        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-        var result = await sender.Send(
-            new RefreshTokenCommand.Command(dto.RefreshToken, ipAddress),
-            cancellationToken);
-
-        return result.IsSuccess
-            ? Ok(result.Value)
-            : BadRequest(new { error = result.Error });
+        return HandleResult(await Mediator.Send(command));
     }
 
-    /// <summary>POST /api/users/logout — Вихід із системи (відкликання refresh token)</summary>
+    [Authorize]
     [HttpPost("logout")]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Logout(
-        [FromBody] LogoutDto dto,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<bool>> Logout([FromBody] LogoutUser.Command command)
     {
-        var result = await sender.Send(
-            new LogoutUser.Command(dto.RefreshToken),
-            cancellationToken);
-
-        return result.IsSuccess
-            ? Ok(new { message = "Виконано вихід із системи." })
-            : BadRequest(new { error = result.Error });
+        return HandleResult(await Mediator.Send(command));
     }
 
-    // ── Account management endpoints (authorized) ─────────────────
-
-    /// <summary>PUT /api/users/{userId}/password — Зміна пароля</summary>
-    [HttpPut("{userId:guid}/password")]
     [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> ChangePassword(
-        [FromRoute] Guid userId,
-        [FromBody] ChangePasswordDto dto,
-        CancellationToken cancellationToken)
+    [HttpPut("{id}/change-password")]
+    public async Task<ActionResult<bool>> ChangePassword(Guid id, [FromBody] ChangePasswordDto dto)
     {
-        var result = await sender.Send(
-            new ChangePassword.Command(userId, dto),
-            cancellationToken);
-
-        return result.IsSuccess
-            ? Ok(new { message = "Пароль успішно змінено." })
-            : BadRequest(new { error = result.Error });
+        return HandleResult(await Mediator.Send(new ChangePassword.Command(id, dto)));
     }
 
-    /// <summary>DELETE /api/users/{userId} — Деактивація акаунту (soft delete)</summary>
-    [HttpDelete("{userId:guid}")]
     [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Delete(
-        [FromRoute] Guid userId,
-        CancellationToken cancellationToken)
+    [HttpPut("{id}")]
+    public async Task<ActionResult<UserResponseDto>> Update(Guid id, [FromBody] UpdateUserDto dto)
     {
-        var result = await sender.Send(
-            new DeleteUser.Command(userId),
-            cancellationToken);
-
-        return result.IsSuccess
-            ? Ok(new { message = "Акаунт деактивовано." })
-            : BadRequest(new { error = result.Error });
+        return HandleResult(await Mediator.Send(new UpdateUser.Command(id, dto)));
     }
 
- 
-    // ── Queries (Data Retrieval) ──────────────────────────────────
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<bool>> Delete(Guid id)
+    {
+        return HandleResult(await Mediator.Send(new DeleteUser.Command(id)));
+    }
 
-    /// <summary>GET /api/users — Отримання списку всіх користувачів (з пагінацією)</summary>
+    [Authorize(Roles = "Admin")]
     [HttpGet]
-    [Authorize] // Обов'язково з токеном, як ми вказували в Postman
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetAll(
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10,
-        CancellationToken cancellationToken = default)
+    public async Task<ActionResult<IReadOnlyList<UserResponseDto>>> GetAll([FromQuery] GetAllUsers.Query query)
     {
-        // Переконайся, що клас запиту називається саме GetAllUsers.Query. 
-        // Якщо інакше - просто підправ назву.
-        var result = await sender.Send(
-            new GetAllUsers.Query(page, pageSize),
-            cancellationToken);
-
-        return result.IsSuccess
-            ? Ok(result.Value)
-            : BadRequest(new { error = result.Error });
+        return HandleResult(await Mediator.Send(query));
     }
 
-    /// <summary>GET /api/users/{userId} — Отримання користувача за ID</summary>
-    [HttpGet("{userId:guid}")]
     [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetById(
-        [FromRoute] Guid userId,
-        CancellationToken cancellationToken)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<UserResponseDto>> GetById(Guid id)
     {
-        var result = await sender.Send(
-            new GetUserById.Query(userId),
-            cancellationToken);
-
-        return result.IsSuccess
-            ? Ok(result.Value)
-            : BadRequest(new { error = result.Error });
+        return HandleResult(await Mediator.Send(new GetUserById.Query(id)));
     }
 }
-
-
-

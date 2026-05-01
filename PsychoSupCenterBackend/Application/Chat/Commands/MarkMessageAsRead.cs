@@ -1,4 +1,4 @@
-﻿// Application/Chat/Commands/MarkMessageAsRead.cs
+﻿
 using FluentValidation;
 using MediatR;
 using PsychoSupCenterBackend.Application.Common.Behaviors;

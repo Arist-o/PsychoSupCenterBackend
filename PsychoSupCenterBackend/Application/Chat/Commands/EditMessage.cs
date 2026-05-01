@@ -1,4 +1,5 @@
 ﻿
+using Application.Chat.DTOs;
 using FluentValidation;
 using MediatR;
 using PsychoSupCenterBackend.Application.Chat.DTOs;
@@ -12,8 +13,7 @@ public static class EditMessage
 {
     public sealed record Command(
         Guid MessageId,
-        Guid EditorUserId,
-        string NewContent
+        EditMessageDto Dto
     ) : ICommand<Result<ChatMessageResponseDto>>;
 
     public sealed class Validator : AbstractValidator<Command>
@@ -21,8 +21,8 @@ public static class EditMessage
         public Validator()
         {
             RuleFor(x => x.MessageId).NotEmpty();
-            RuleFor(x => x.EditorUserId).NotEmpty();
-            RuleFor(x => x.NewContent)
+            RuleFor(x => x.Dto.EditorUserId).NotEmpty();
+            RuleFor(x => x.Dto.NewContent)
                 .NotEmpty().MaximumLength(4000);
         }
     }
@@ -39,11 +39,11 @@ public static class EditMessage
             if (message is null || message.IsDeleted)
                 return Result<ChatMessageResponseDto>.Failure("Повідомлення не знайдено.");
 
-            if (message.SenderId != request.EditorUserId)
+            if (message.SenderId != request.Dto.EditorUserId)
                 return Result<ChatMessageResponseDto>.Failure(
                     "Можна редагувати лише власні повідомлення.");
 
-            message.Content = request.NewContent;
+            message.Content = request.Dto.NewContent;
             message.EditedAt = DateTime.UtcNow;
             unitOfWork.ChatMessages.Update(message);
 
