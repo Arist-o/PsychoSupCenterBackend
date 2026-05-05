@@ -31,7 +31,7 @@ public static class GetSpecializationById
                 return Result<SpecializationResponseDto>.Failure("Спеціалізацію не знайдено.");
 
             return Result<SpecializationResponseDto>.Success(
-                new SpecializationResponseDto(spec.Id, spec.DoctorProfileId, spec.Name));
+                new SpecializationResponseDto(spec.Id, spec.Name, spec.Description));
         }
     }
 }

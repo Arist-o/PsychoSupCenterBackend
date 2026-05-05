@@ -24,7 +24,7 @@ public static class GetAllSpecializations
                 .OrderBy(s => s.Name)
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .Select(s => new SpecializationResponseDto(s.Id, s.DoctorProfileId, s.Name))
+                .Select(s => new SpecializationResponseDto(s.Id, s.Name, s.Description))
                 .ToList();
 
             return Result<IReadOnlyList<SpecializationResponseDto>>.Success(paged);

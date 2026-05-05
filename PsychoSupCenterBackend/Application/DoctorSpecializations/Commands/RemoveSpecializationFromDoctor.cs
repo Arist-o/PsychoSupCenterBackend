@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using PsychoSupCenterBackend.Application.Common.Behaviors;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
 using PsychoSupCenterBackend.Application.Common.Models;
@@ -28,16 +29,24 @@ public static class RemoveSpecializationFromDoctor
         public async Task<Result<bool>> Handle(
             Command request, CancellationToken cancellationToken)
         {
-            var spec = await unitOfWork.DoctorSpecializations.FirstOrDefaultAsync(
-                s => s.DoctorProfileId == request.DoctorProfileId
-                  && s.Name.ToLower() == request.Name.ToLower(),
-                cancellationToken);
+            var doctor = await unitOfWork.DoctorProfiles.Query()
+                .Include(d => d.Specializations)
+                .FirstOrDefaultAsync(d => d.Id == request.DoctorProfileId, cancellationToken);
+
+            if (doctor is null)
+                return Result<bool>.Failure("Лікаря не знайдено.");
+
+            var spec = doctor.Specializations
+                .FirstOrDefault(s => s.Name.ToLower() == request.Name.ToLower());
 
             if (spec is null)
                 return Result<bool>.Failure(
                     $"Спеціалізацію '{request.Name}' не знайдено у цього лікаря.");
 
-            unitOfWork.DoctorSpecializations.Remove(spec);
+            doctor.Specializations.Remove(spec);
+            
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
             return Result<bool>.Success(true);
         }
     }

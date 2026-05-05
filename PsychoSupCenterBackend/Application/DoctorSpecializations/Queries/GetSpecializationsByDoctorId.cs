@@ -1,5 +1,6 @@
 ﻿
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using PsychoSupCenterBackend.Application.Common.Behaviors;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
 using PsychoSupCenterBackend.Application.Common.Models;
@@ -18,13 +19,16 @@ public static class GetSpecializationsByDoctorId
         public async Task<Result<IReadOnlyList<SpecializationResponseDto>>> Handle(
             Query request, CancellationToken cancellationToken)
         {
-            var specs = await unitOfWork.DoctorSpecializations.FindAsync(
-                s => s.DoctorProfileId == request.DoctorProfileId,
-                cancellationToken);
+            var doctor = await unitOfWork.DoctorProfiles.Query()
+                .Include(d => d.Specializations)
+                .FirstOrDefaultAsync(d => d.Id == request.DoctorProfileId, cancellationToken);
 
-            var result = specs
+            if (doctor is null)
+                return Result<IReadOnlyList<SpecializationResponseDto>>.Failure("Лікаря не знайдено.");
+
+            var result = doctor.Specializations
                 .OrderBy(s => s.Name)
-                .Select(s => new SpecializationResponseDto(s.Id, s.DoctorProfileId, s.Name))
+                .Select(s => new SpecializationResponseDto(s.Id, s.Name, s.Description))
                 .ToList();
 
             return Result<IReadOnlyList<SpecializationResponseDto>>.Success(result);

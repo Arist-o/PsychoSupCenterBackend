@@ -1,6 +1,7 @@
 ﻿
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using PsychoSupCenterBackend.Application.Common.Behaviors;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
 using PsychoSupCenterBackend.Application.Common.Models;
@@ -31,37 +32,35 @@ public static class AssignSpecializationToDoctor
             Command request,
             CancellationToken cancellationToken)
         {
-            var doctorExists = await unitOfWork.DoctorProfiles
-                .AnyAsync(d => d.Id == request.Dto.DoctorProfileId, cancellationToken);
+            var doctor = await unitOfWork.DoctorProfiles.Query()
+                .Include(d => d.Specializations)
+                .FirstOrDefaultAsync(d => d.Id == request.Dto.DoctorProfileId, cancellationToken);
 
-            if (!doctorExists)
+            if (doctor is null)
                 return Result<SpecializationResponseDto>.Failure(
                     $"Лікаря з Id '{request.Dto.DoctorProfileId}' не знайдено.");
 
-            var alreadyAssigned = await unitOfWork.DoctorSpecializations.AnyAsync(
-                s => s.DoctorProfileId == request.Dto.DoctorProfileId
-                  && s.Name.ToLower() == request.Dto.Name.ToLower(),
+            var specialization = await unitOfWork.DoctorSpecializations.FirstOrDefaultAsync(
+                s => s.Name.ToLower() == request.Dto.Name.ToLower(),
                 cancellationToken);
 
-            if (alreadyAssigned)
+            if (specialization is null)
+                return Result<SpecializationResponseDto>.Failure(
+                    $"Спеціалізацію '{request.Dto.Name}' не знайдено в довіднику.");
+
+            if (doctor.Specializations.Any(s => s.Id == specialization.Id))
                 return Result<SpecializationResponseDto>.Failure(
                     $"Спеціалізація '{request.Dto.Name}' вже призначена цьому лікарю.");
 
-            var specialization = new DoctorSpecialization
-            {
-                Id = Guid.NewGuid(),
-                DoctorProfileId = request.Dto.DoctorProfileId,
-                Name = request.Dto.Name,
-            };
-
-            await unitOfWork.DoctorSpecializations.AddAsync(
-                specialization, cancellationToken);
+            doctor.Specializations.Add(specialization);
+            
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result<SpecializationResponseDto>.Success(
                 new SpecializationResponseDto(
                     specialization.Id,
-                    specialization.DoctorProfileId,
-                    specialization.Name));
+                    specialization.Name,
+                    specialization.Description));
         }
     }
 }

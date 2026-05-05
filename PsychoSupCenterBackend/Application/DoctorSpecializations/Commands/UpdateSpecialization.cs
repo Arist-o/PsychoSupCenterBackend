@@ -38,7 +38,7 @@ public static class UpdateSpecialization
             unitOfWork.DoctorSpecializations.Update(spec);
 
             return Result<SpecializationResponseDto>.Success(
-                new SpecializationResponseDto(spec.Id, spec.DoctorProfileId, spec.Name));
+                new SpecializationResponseDto(spec.Id, spec.Name, spec.Description));
         }
     }
 }

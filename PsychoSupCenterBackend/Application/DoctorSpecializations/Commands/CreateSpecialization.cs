@@ -18,10 +18,12 @@ public static class CreateSpecialization
     {
         public Validator()
         {
-            RuleFor(x => x.Dto.DoctorProfileId).NotEmpty();
             RuleFor(x => x.Dto.Name)
                 .NotEmpty().WithMessage("Назва спеціалізації є обов'язковою.")
                 .MaximumLength(200);
+
+            RuleFor(x => x.Dto.Description)
+                .MaximumLength(1000).WithMessage("Опис не може перевищувати 1000 символів.");
         }
     }
 
@@ -31,32 +33,25 @@ public static class CreateSpecialization
         public async Task<Result<SpecializationResponseDto>> Handle(
             Command request, CancellationToken cancellationToken)
         {
-            var doctorExists = await unitOfWork.DoctorProfiles
-                .AnyAsync(d => d.Id == request.Dto.DoctorProfileId, cancellationToken);
-
-            if (!doctorExists)
-                return Result<SpecializationResponseDto>.Failure("Лікаря не знайдено.");
-
             var duplicate = await unitOfWork.DoctorSpecializations.AnyAsync(
-                s => s.DoctorProfileId == request.Dto.DoctorProfileId
-                  && s.Name.ToLower() == request.Dto.Name.ToLower(),
+                s => s.Name.ToLower() == request.Dto.Name.ToLower(),
                 cancellationToken);
 
             if (duplicate)
                 return Result<SpecializationResponseDto>.Failure(
-                    $"Спеціалізація '{request.Dto.Name}' вже існує у цього лікаря.");
+                    $"Спеціалізація з назвою '{request.Dto.Name}' вже існує.");
 
             var spec = new DoctorSpecialization
             {
                 Id = Guid.NewGuid(),
-                DoctorProfileId = request.Dto.DoctorProfileId,
                 Name = request.Dto.Name,
+                Description = request.Dto.Description
             };
 
             await unitOfWork.DoctorSpecializations.AddAsync(spec, cancellationToken);
 
             return Result<SpecializationResponseDto>.Success(
-                new SpecializationResponseDto(spec.Id, spec.DoctorProfileId, spec.Name));
+                new SpecializationResponseDto(spec.Id, spec.Name, spec.Description));
         }
     }
 }

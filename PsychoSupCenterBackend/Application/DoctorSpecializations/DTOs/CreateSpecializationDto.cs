@@ -4,5 +4,5 @@ using System.Text;
 
 namespace Application.DoctorSpecializations.DTOs
 {
-    public sealed record CreateSpecializationDto(Guid DoctorProfileId, string Name);
+    public sealed record CreateSpecializationDto(string Name,string Description);
 }

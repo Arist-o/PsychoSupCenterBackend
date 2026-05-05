@@ -6,6 +6,7 @@ using PsychoSupCenterBackend.Application;
 using PsychoSupCenterBackend.Application.Chat.Hubs;
 using PsychoSupCenterBackend.Domain.Entities;
 using PsychoSupCenterBackend.Persistence;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,11 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+         {
+             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+         });
 builder.Services.AddEndpointsApiExplorer();
 
 
