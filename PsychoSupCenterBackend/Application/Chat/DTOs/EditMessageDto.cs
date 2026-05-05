@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.Chat.DTOs
+namespace PsychoSupCenterBackend.Application.Chat.DTOs
 {
     public sealed record EditMessageDto(Guid EditorUserId, string NewContent);
 }

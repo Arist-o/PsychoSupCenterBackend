@@ -1,5 +1,4 @@
 ﻿
-using Application.DoctorAvailabilities.DTOs;
 using FluentValidation;
 using MediatR;
 using PsychoSupCenterBackend.Application.Common.Behaviors;

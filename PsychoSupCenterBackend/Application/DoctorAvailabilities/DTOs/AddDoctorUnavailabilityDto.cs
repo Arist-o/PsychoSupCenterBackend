@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+namespace PsychoSupCenterBackend.Application.DoctorAvailabilities.DTOs;
 
-namespace Application.DoctorAvailabilities.DTOs
-{
-    public sealed record AddDoctorUnavailabilityDto(Guid DoctorProfileId, DateTime StartDate, DateTime EndDate, string? Reason);
-}
+public sealed record AddDoctorUnavailabilityDto(
+    Guid DoctorProfileId,
+    DateTime StartDate,
+    DateTime EndDate,
+    string? Reason
+);

@@ -1,5 +1,4 @@
-﻿using Application.DoctorAvailabilities.DTOs;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using PsychoSupCenterBackend.Application.Common.Behaviors;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
@@ -17,6 +16,7 @@ public static class UpdateDoctorAvailability
         public Validator()
         {
             RuleFor(x => x.AvailabilityId).NotEmpty();
+            RuleFor(x => x.Dto.Day).IsInEnum();
             RuleFor(x => x.Dto.StartTime)
                 .LessThan(x => x.Dto.EndTime)
                 .WithMessage("Час початку має бути раніше часу кінця.");

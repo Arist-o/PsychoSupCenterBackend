@@ -55,5 +55,29 @@ public class ChatController : BaseApiController
             new GetChatMessages.Query(roomId, page, pageSize)));
     }
 
-    
+    [HttpPost("rooms/{roomId}/messages")]
+    public async Task<ActionResult<ChatMessageResponseDto>> SendMessage(Guid roomId, [FromBody] SendMessageDto dto)
+    {
+        var safeDto = dto with { ChatRoomId = roomId, SenderId = GetCurrentUserId() };
+        return HandleResult(await Mediator.Send(new SendMessage.Command(safeDto)));
+    }
+
+    [HttpPut("messages/{messageId}")]
+    public async Task<ActionResult<ChatMessageResponseDto>> EditMessage(Guid messageId, [FromBody] EditMessageDto dto)
+    {
+        var safeDto = dto with { EditorUserId = GetCurrentUserId() };
+        return HandleResult(await Mediator.Send(new EditMessage.Command(messageId, safeDto)));
+    }
+
+    [HttpDelete("messages/{messageId}")]
+    public async Task<ActionResult<bool>> DeleteMessage(Guid messageId)
+    {
+        return HandleResult(await Mediator.Send(new DeleteMessage.Command(messageId, GetCurrentUserId())));
+    }
+
+    [HttpPost("rooms/{roomId}/read")]
+    public async Task<ActionResult<bool>> MarkAsRead(Guid roomId)
+    {
+        return HandleResult(await Mediator.Send(new MarkMessageAsRead.Command(roomId, GetCurrentUserId())));
+    }
 }

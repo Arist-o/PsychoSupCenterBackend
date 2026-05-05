@@ -41,5 +41,11 @@ public class BillingController : BaseApiController
     {
         return HandleResult(await Mediator.Send(new RefundBilling.Command(id)));
     }
+
+    [HttpPost("{id:guid}/pay")]
+    public async Task<ActionResult<BillingResponseDto>> Pay(Guid id, [FromBody] ProcessPaymentDto dto)
+    {
+        return HandleResult(await Mediator.Send(new ProcessPayment.Command(id, dto.PaymentMethod)));
+    }
 }
 

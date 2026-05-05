@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.Doctors.DTOs
+namespace PsychoSupCenterBackend.Application.Doctors.DTOs
 {
     public sealed record UpdateUnavailabilityBodyDto(
       DateTime StartDate,

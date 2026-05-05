@@ -1,4 +1,4 @@
-﻿using Application.Doctors.DTOs;
+﻿using PsychoSupCenterBackend.Application.Doctors.DTOs;
 using FluentValidation;
 using MediatR;
 using PsychoSupCenterBackend.Application.Common.Behaviors;

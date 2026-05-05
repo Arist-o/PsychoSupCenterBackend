@@ -45,4 +45,18 @@ public class DoctorSpecializationsController : BaseApiController
     {
         return HandleResult(await Mediator.Send(new AssignSpecializationToDoctor.Command(dto)));
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPut("{id}")]
+    public async Task<ActionResult<SpecializationResponseDto>> Update(Guid id, [FromBody] UpdateSpecializationDto dto)
+    {
+        return HandleResult(await Mediator.Send(new UpdateSpecialization.Command(id, dto)));
+    }
+
+    [Authorize(Roles = "Admin,Doctor")]
+    [HttpDelete("unassign")]
+    public async Task<ActionResult<bool>> UnassignSpecialization([FromBody] RemoveSpecializationDto dto)
+    {
+        return HandleResult(await Mediator.Send(new RemoveSpecializationFromDoctor.Command(dto.DoctorProfileId, dto.Name)));
+    }
 }

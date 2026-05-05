@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+namespace PsychoSupCenterBackend.Application.DoctorAvailabilities.DTOs;
 
-namespace Application.DoctorAvailabilities.DTOs
-{
-    public sealed record UpdateDoctorAvailabilityDto(DayOfWeek Day, TimeSpan StartTime, TimeSpan EndTime);
-
-}
+public sealed record UpdateDoctorAvailabilityDto(
+    DayOfWeek Day,
+    TimeSpan StartTime,
+    TimeSpan EndTime
+);

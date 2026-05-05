@@ -17,15 +17,15 @@ public class AppointmentsController : BaseApiController
     }
 
     [HttpGet("by-doctor/{doctorProfileId}")]
-    public async Task<ActionResult<IReadOnlyList<AppointmentResponseDto>>> GetByDoctorId(Guid doctorProfileId)
+    public async Task<ActionResult<IReadOnlyList<AppointmentResponseDto>>> GetByDoctorId(Guid doctorProfileId, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
-        return HandleResult(await Mediator.Send(new GetAppointmentsByDoctorId.Query(doctorProfileId)));
+        return HandleResult(await Mediator.Send(new GetAppointmentsByDoctorId.Query(doctorProfileId, page, pageSize)));
     }
 
     [HttpGet("by-patient/{patientProfileId}")]
-    public async Task<ActionResult<IReadOnlyList<AppointmentResponseDto>>> GetByPatientId(Guid patientProfileId)
+    public async Task<ActionResult<IReadOnlyList<AppointmentResponseDto>>> GetByPatientId(Guid patientProfileId, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
-        return HandleResult(await Mediator.Send(new GetAppointmentsByPatientId.Query(patientProfileId)));
+        return HandleResult(await Mediator.Send(new GetAppointmentsByPatientId.Query(patientProfileId, page, pageSize)));
     }
 
     [HttpPost]

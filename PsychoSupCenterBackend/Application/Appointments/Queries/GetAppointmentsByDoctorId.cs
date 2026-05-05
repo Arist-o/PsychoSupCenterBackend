@@ -9,7 +9,7 @@ namespace PsychoSupCenterBackend.Application.Appointments.Queries;
 
 public static class GetAppointmentsByDoctorId
 {
-    public sealed record Query(Guid DoctorProfileId) : IQuery<Result<IReadOnlyList<AppointmentResponseDto>>>;
+    public sealed record Query(Guid DoctorProfileId, int Page = 1, int PageSize = 20) : IQuery<Result<IReadOnlyList<AppointmentResponseDto>>>;
 
     public sealed class Validator : AbstractValidator<Query>
     {
@@ -22,10 +22,14 @@ public static class GetAppointmentsByDoctorId
         {
             var appointments = await unitOfWork.Appointments.FindAsync(a => a.DoctorProfileId == request.DoctorProfileId, cancellationToken);
 
-            var result = appointments.Select(appt => new AppointmentResponseDto(
-                appt.Id, appt.DoctorProfileId, appt.PatientProfileId, appt.DoctorServiceId,
-                appt.ChatRoomId, appt.BillingId, appt.ScheduledAt, appt.DurationMinutes,
-                appt.Status, appt.Type, appt.Notes, appt.CreatedAt)).ToList();
+            var result = appointments
+                .OrderByDescending(a => a.ScheduledAt)
+                .Skip((request.Page - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(appt => new AppointmentResponseDto(
+                    appt.Id, appt.DoctorProfileId, appt.PatientProfileId, appt.DoctorServiceId,
+                    appt.ChatRoomId, appt.BillingId, appt.ScheduledAt, appt.DurationMinutes,
+                    appt.Status, appt.Type, appt.Notes, appt.CreatedAt)).ToList();
 
             return Result<IReadOnlyList<AppointmentResponseDto>>.Success(result);
         }
