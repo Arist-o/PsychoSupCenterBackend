@@ -31,6 +31,12 @@ public class DoctorCertificatesController : BaseApiController
         return HandleResult(await Mediator.Send(new AddDoctorCertificate.Command(dto)));
     }
 
+    [HttpPost("upload")]
+    public async Task<ActionResult<DoctorCertificateResponseDto>> Upload([FromForm] Guid doctorProfileId, IFormFile file)
+    {
+        return HandleResult(await Mediator.Send(new UploadDoctorCertificate.Command(doctorProfileId, file)));
+    }
+
     [HttpPut("{id}")]
     public async Task<ActionResult<DoctorCertificateResponseDto>> Update(Guid id, [FromBody] UpdateDoctorCertificateDto dto)
     {

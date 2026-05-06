@@ -72,4 +72,11 @@ public class UsersController : BaseApiController
     {
         return HandleResult(await Mediator.Send(new GetUserById.Query(id)));
     }
+
+    [Authorize]
+    [HttpPost("{id}/photo")]
+    public async Task<ActionResult<string>> UploadPhoto(Guid id, IFormFile file)
+    {
+        return HandleResult(await Mediator.Send(new UploadUserPhoto.Command(id, file)));
+    }
 }

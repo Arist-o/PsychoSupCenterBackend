@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using PsychoSupCenterBackend.API.Middleware;
 using PsychoSupCenterBackend.Application;
 using PsychoSupCenterBackend.Application.Chat.Hubs;
+using PsychoSupCenterBackend.Application.Common.Interfaces;
 using PsychoSupCenterBackend.Domain.Entities;
+using PsychoSupCenterBackend.Infrasructure.Photos;
 using PsychoSupCenterBackend.Persistence;
 using System.Text.Json.Serialization;
 
@@ -38,7 +40,9 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
+builder.Services.AddScoped<IPhotoService, PhotoService>();
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

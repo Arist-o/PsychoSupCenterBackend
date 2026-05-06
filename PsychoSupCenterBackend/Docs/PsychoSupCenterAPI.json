@@ -1,0 +1,272 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PsychoSupCenter API",
+    "version": "1.0.0",
+    "description": "Повна документація API для системи психологічної підтримки. Включає всі ендпоінти для користувачів, лікарів, пацієнтів, записів, білінгу та чату."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Локальний сервер розробки"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/users/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Реєстрація",
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" },
+                  "firstName": { "type": "string" },
+                  "lastName": { "type": "string" },
+                  "phoneNumber": { "type": "string" },
+                  "role": { "type": "string", "enum": ["Patient", "Doctor", "Admin"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/api/users/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Логін",
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Returns token" } }
+      }
+    },
+    "/api/users/{id}/photo": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Завантаження фото профілю",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": { "file": { "type": "string", "format": "binary" } }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "URL" } }
+      }
+    },
+    "/api/doctors": {
+      "get": {
+        "tags": ["Doctors"],
+        "summary": "Всі лікарі",
+        "responses": { "200": { "description": "List" } }
+      }
+    },
+    "/api/doctors/{userId}": {
+      "post": {
+        "tags": ["Doctors"],
+        "summary": "Створити профіль лікаря",
+        "parameters": [{ "name": "userId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bio": { "type": "string" },
+                  "careerStartDate": { "type": "string", "format": "date-time" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Profile" } }
+      }
+    },
+    "/api/patients": {
+      "get": {
+        "tags": ["Patients"],
+        "summary": "Всі пацієнти (Admin/Doctor)",
+        "responses": { "200": { "description": "List" } }
+      }
+    },
+    "/api/appointments": {
+      "post": {
+        "tags": ["Appointments"],
+        "summary": "Створити запис",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "doctorProfileId": { "type": "string", "format": "uuid" },
+                  "patientProfileId": { "type": "string", "format": "uuid" },
+                  "doctorServiceId": { "type": "string", "format": "uuid" },
+                  "scheduledAt": { "type": "string", "format": "date-time" },
+                  "durationMinutes": { "type": "integer" },
+                  "type": { "type": "string" },
+                  "notes": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Appointment" } }
+      }
+    },
+    "/api/billing/by-appointment/{appointmentId}": {
+      "get": {
+        "tags": ["Billing"],
+        "summary": "Рахунок за записом",
+        "parameters": [{ "name": "appointmentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": { "200": { "description": "Billing info" } }
+      }
+    },
+    "/api/billing/{id}/pay": {
+      "post": {
+        "tags": ["Billing"],
+        "summary": "Оплатити",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "paymentMethod": { "type": "string", "enum": ["Card", "Cash", "Online"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Result" } }
+      }
+    },
+    "/api/chat/rooms": {
+      "get": {
+        "tags": ["Chat"],
+        "summary": "Мої кімнати",
+        "responses": { "200": { "description": "List" } },
+        "operationId": "getMyRooms"
+      },
+      "post": {
+        "tags": ["Chat"],
+        "summary": "Створити кімнату",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": { "type": "string", "enum": ["Consultation", "Support"] },
+                  "participantUserIds": { "type": "array", "items": { "type": "string", "format": "uuid" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Room" } }
+      }
+    },
+    "/api/doctorcertificates/upload": {
+      "post": {
+        "tags": ["Certificates"],
+        "summary": "Завантажити сертифікат",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "doctorProfileId": { "type": "string", "format": "uuid" },
+                  "file": { "type": "string", "format": "binary" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Certificate" } }
+      }
+    },
+    "/api/doctorspecializations/assign": {
+      "post": {
+        "tags": ["Specializations"],
+        "summary": "Призначити спеціалізацію",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "doctorProfileId": { "type": "string", "format": "uuid" },
+                  "name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/api/reviews": {
+      "post": {
+        "tags": ["Reviews"],
+        "summary": "Залишити відгук",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "doctorProfileId": { "type": "string", "format": "uuid" },
+                  "patientProfileId": { "type": "string", "format": "uuid" },
+                  "appointmentId": { "type": "string", "format": "uuid" },
+                  "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+                  "comment": { "type": "string" },
+                  "isAnonymous": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Review" } }
+      }
+    }
+  }
+}

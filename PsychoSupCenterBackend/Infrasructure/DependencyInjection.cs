@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
 using PsychoSupCenterBackend.Infrasructure.MongoDb;
+using PsychoSupCenterBackend.Infrasructure.Photos;
 using System.Text;
 
 namespace Infrasructure;
@@ -18,9 +19,11 @@ public static class DependencyInjection
         services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
         services.Configure<MongoDbSettings>(configuration.GetSection("MongoDb"));
         services.Configure<EmailSettings>(configuration.GetSection("Email"));
+        services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
 
         services.AddTransient<IJwtTokenService, JwtTokenService>();
         services.AddTransient<IEmailService, EmailService>();
+        services.AddScoped<IPhotoService, PhotoService>();
         services.AddSingleton<IRefreshTokenRepository, MongoRefreshTokenRepository>();
 
         var jwtSettings = new JwtSettings();
