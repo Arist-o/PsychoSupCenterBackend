@@ -42,7 +42,7 @@ public static class GetChatMessages
                 .Select(m => new ChatMessageResponseDto(
                     m.Id, m.ChatRoomId, m.SenderId,
                     m.Sender.FirstName + " " + m.Sender.LastName,
-                    m.Content, m.Type, m.IsRead,
+                    m.Content, m.PhotoUrl, m.Type, m.IsRead,
                     m.SentAt, m.EditedAt, m.IsDeleted))
                 .ToListAsync(cancellationToken);
 

@@ -51,7 +51,7 @@ public static class CreateSpecialization
             await unitOfWork.DoctorSpecializations.AddAsync(spec, cancellationToken);
 
             return Result<SpecializationResponseDto>.Success(
-                new SpecializationResponseDto(spec.Id, spec.Name, spec.Description));
+                new SpecializationResponseDto(spec.Id, spec.Name, spec.Description, Array.Empty<Guid>()));
         }
     }
 }

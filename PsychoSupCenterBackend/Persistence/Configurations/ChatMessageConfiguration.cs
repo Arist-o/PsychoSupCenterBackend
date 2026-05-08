@@ -11,8 +11,12 @@ public class ChatMessageConfiguration : IEntityTypeConfiguration<ChatMessage>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Content)
-            .IsRequired()
+            .IsRequired(false)
             .HasMaxLength(4000);
+
+        builder.Property(x => x.PhotoUrl)
+            .IsRequired(false)
+            .HasMaxLength(2048);
 
         builder.Property(x => x.Type)
             .HasConversion<string>()

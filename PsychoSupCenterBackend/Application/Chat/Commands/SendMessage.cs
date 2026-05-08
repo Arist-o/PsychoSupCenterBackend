@@ -18,7 +18,10 @@ public static class SendMessage
         {
             RuleFor(x => x.Dto.ChatRoomId).NotEmpty();
             RuleFor(x => x.Dto.SenderId).NotEmpty();
-            RuleFor(x => x.Dto.Content).NotEmpty().MaximumLength(4000);
+            RuleFor(x => x.Dto.Content).MaximumLength(4000);
+            RuleFor(x => x.Dto.PhotoUrl).MaximumLength(2048);
+            RuleFor(x => x).Must(x => !string.IsNullOrWhiteSpace(x.Dto.Content) || !string.IsNullOrWhiteSpace(x.Dto.PhotoUrl))
+                .WithMessage("Повідомлення має містити текст або фото.");
             RuleFor(x => x.Dto.Type).IsInEnum();
         }
     }
@@ -33,6 +36,7 @@ public static class SendMessage
                 ChatRoomId = request.Dto.ChatRoomId,
                 SenderId = request.Dto.SenderId,
                 Content = request.Dto.Content,
+                PhotoUrl = request.Dto.PhotoUrl,
                 Type = request.Dto.Type,
                 IsRead = false,
                 SentAt = DateTime.UtcNow,
@@ -44,7 +48,7 @@ public static class SendMessage
 
             return Result<ChatMessageResponseDto>.Success(new ChatMessageResponseDto(
                 message.Id, message.ChatRoomId, message.SenderId, $"{sender?.FirstName} {sender?.LastName}".Trim(),
-                message.Content, message.Type, message.IsRead, message.SentAt, message.EditedAt, message.IsDeleted));
+                message.Content, message.PhotoUrl, message.Type, message.IsRead, message.SentAt, message.EditedAt, message.IsDeleted));
         }
     }
 }

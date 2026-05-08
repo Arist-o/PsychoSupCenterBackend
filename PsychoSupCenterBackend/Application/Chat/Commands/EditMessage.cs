@@ -52,7 +52,7 @@ public static class EditMessage
             return Result<ChatMessageResponseDto>.Success(new ChatMessageResponseDto(
                 message.Id, message.ChatRoomId, message.SenderId,
                 $"{sender?.FirstName} {sender?.LastName}".Trim(),
-                message.Content, message.Type, message.IsRead,
+                message.Content, message.PhotoUrl, message.Type, message.IsRead,
                 message.SentAt, message.EditedAt, message.IsDeleted));
         }
     }

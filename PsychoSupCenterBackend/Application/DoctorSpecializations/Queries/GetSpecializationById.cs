@@ -1,6 +1,7 @@
 ﻿
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using PsychoSupCenterBackend.Application.Common.Behaviors;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
 using PsychoSupCenterBackend.Application.Common.Models;
@@ -24,14 +25,15 @@ public static class GetSpecializationById
         public async Task<Result<SpecializationResponseDto>> Handle(
             Query request, CancellationToken cancellationToken)
         {
-            var spec = await unitOfWork.DoctorSpecializations
-                .GetByIdAsync(request.SpecializationId, cancellationToken);
+            var spec = await unitOfWork.DoctorSpecializations.Query()
+                .Include(s => s.DoctorProfiles)
+                .FirstOrDefaultAsync(s => s.Id == request.SpecializationId, cancellationToken);
 
             if (spec is null)
                 return Result<SpecializationResponseDto>.Failure("Спеціалізацію не знайдено.");
 
             return Result<SpecializationResponseDto>.Success(
-                new SpecializationResponseDto(spec.Id, spec.Name, spec.Description));
+                new SpecializationResponseDto(spec.Id, spec.Name, spec.Description, spec.DoctorProfiles.Select(p => p.Id)));
         }
     }
 }

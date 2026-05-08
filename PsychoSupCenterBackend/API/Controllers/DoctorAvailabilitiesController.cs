@@ -67,4 +67,11 @@ public class DoctorAvailabilitiesController : BaseApiController
     {
         return HandleResult(await Mediator.Send(new DeleteDoctorUnavailability.Command(id)));
     }
+
+    [AllowAnonymous]
+    [HttpGet("slots/{doctorProfileId}")]
+    public async Task<ActionResult<List<TimeSpan>>> GetAvailableSlots(Guid doctorProfileId, [FromQuery] DateTime date, [FromQuery] int durationMinutes = 60)
+    {
+        return HandleResult(await Mediator.Send(new GetAvailableSlots.Query(doctorProfileId, date, durationMinutes)));
+    }
 }

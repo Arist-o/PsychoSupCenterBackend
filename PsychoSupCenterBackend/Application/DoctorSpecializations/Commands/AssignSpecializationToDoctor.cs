@@ -40,9 +40,9 @@ public static class AssignSpecializationToDoctor
                 return Result<SpecializationResponseDto>.Failure(
                     $"Лікаря з Id '{request.Dto.DoctorProfileId}' не знайдено.");
 
-            var specialization = await unitOfWork.DoctorSpecializations.FirstOrDefaultAsync(
-                s => s.Name.ToLower() == request.Dto.Name.ToLower(),
-                cancellationToken);
+            var specialization = await unitOfWork.DoctorSpecializations.Query()
+                .Include(s => s.DoctorProfiles)
+                .FirstOrDefaultAsync(s => s.Name.ToLower() == request.Dto.Name.ToLower(), cancellationToken);
 
             if (specialization is null)
                 return Result<SpecializationResponseDto>.Failure(
@@ -60,7 +60,8 @@ public static class AssignSpecializationToDoctor
                 new SpecializationResponseDto(
                     specialization.Id,
                     specialization.Name,
-                    specialization.Description));
+                    specialization.Description,
+                    specialization.DoctorProfiles.Select(p => p.Id)));
         }
     }
 }

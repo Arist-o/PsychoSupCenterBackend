@@ -54,7 +54,7 @@ public class DoctorProfileConfiguration : IEntityTypeConfiguration<DoctorProfile
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Specializations)
-            .WithMany()
+            .WithMany(s => s.DoctorProfiles)
             .UsingEntity(j => j.ToTable("DoctorProfileSpecializations"));
 
         builder.HasMany(x => x.Appointments)

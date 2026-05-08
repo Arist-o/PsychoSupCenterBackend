@@ -21,6 +21,7 @@ public static class GetSpecializationsByDoctorId
         {
             var doctor = await unitOfWork.DoctorProfiles.Query()
                 .Include(d => d.Specializations)
+                    .ThenInclude(s => s.DoctorProfiles)
                 .FirstOrDefaultAsync(d => d.Id == request.DoctorProfileId, cancellationToken);
 
             if (doctor is null)
@@ -28,7 +29,7 @@ public static class GetSpecializationsByDoctorId
 
             var result = doctor.Specializations
                 .OrderBy(s => s.Name)
-                .Select(s => new SpecializationResponseDto(s.Id, s.Name, s.Description))
+                .Select(s => new SpecializationResponseDto(s.Id, s.Name, s.Description, s.DoctorProfiles.Select(p => p.Id)))
                 .ToList();
 
             return Result<IReadOnlyList<SpecializationResponseDto>>.Success(result);

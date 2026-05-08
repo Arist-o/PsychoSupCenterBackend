@@ -2,6 +2,7 @@
 using Application.DoctorSpecializations.DTOs;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using PsychoSupCenterBackend.Application.Common.Behaviors;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
 using PsychoSupCenterBackend.Application.Common.Models;
@@ -28,17 +29,19 @@ public static class UpdateSpecialization
         public async Task<Result<SpecializationResponseDto>> Handle(
             Command request, CancellationToken cancellationToken)
         {
-            var spec = await unitOfWork.DoctorSpecializations
-                .GetByIdAsync(request.SpecializationId, cancellationToken);
+            var spec = await unitOfWork.DoctorSpecializations.Query()
+                .Include(s => s.DoctorProfiles)
+                .FirstOrDefaultAsync(s => s.Id == request.SpecializationId, cancellationToken);
 
             if (spec is null)
                 return Result<SpecializationResponseDto>.Failure("Спеціалізацію не знайдено.");
 
             spec.Name = request.Dto.NewName;
             unitOfWork.DoctorSpecializations.Update(spec);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result<SpecializationResponseDto>.Success(
-                new SpecializationResponseDto(spec.Id, spec.Name, spec.Description));
+                new SpecializationResponseDto(spec.Id, spec.Name, spec.Description, spec.DoctorProfiles.Select(p => p.Id)));
         }
     }
 }
