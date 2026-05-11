@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using PsychoSupCenterBackend.Application.Common.Behaviors;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
 using PsychoSupCenterBackend.Application.Common.Models;
@@ -20,16 +21,29 @@ public static class GetAppointmentsByPatientId
     {
         public async Task<Result<IReadOnlyList<AppointmentResponseDto>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var appointments = await unitOfWork.Appointments.FindAsync(a => a.PatientProfileId == request.PatientProfileId  , cancellationToken);
-
-            var result = appointments
+            var appointments = await unitOfWork.Appointments.Query()
+                .Include(a => a.DoctorProfile).ThenInclude(dp => dp.User)
+                .Include(a => a.DoctorProfile).ThenInclude(dp => dp.Specializations)
+                .Include(a => a.PatientProfile).ThenInclude(pp => pp.User)
+                .Include(a => a.DoctorService)
+                .Where(a => a.PatientProfileId == request.PatientProfileId)
                 .OrderByDescending(a => a.ScheduledAt)
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
+                .ToListAsync(cancellationToken);
+
+            var result = appointments
                 .Select(appt => new AppointmentResponseDto(
                     appt.Id, appt.DoctorProfileId, appt.PatientProfileId, appt.DoctorServiceId,
                     appt.ChatRoomId, appt.BillingId, appt.ScheduledAt, appt.DurationMinutes,
-                    appt.Status, appt.Type ?? "Consultation", appt.Notes, appt.CreatedAt)).ToList();
+                    appt.Status, appt.Type ?? "Consultation", appt.Notes, appt.CreatedAt,
+                    $"{appt.DoctorProfile?.User?.FirstName} {appt.DoctorProfile?.User?.LastName}".Trim(),
+                    appt.DoctorProfile?.User?.PhotoUrl,
+                    appt.DoctorProfile?.Specializations?.FirstOrDefault()?.Name,
+                    appt.DoctorService?.ServiceName,
+                    $"{appt.PatientProfile?.User?.FirstName} {appt.PatientProfile?.User?.LastName}".Trim(),
+                    appt.PatientProfile?.User?.PhotoUrl
+                )).ToList();
 
             return Result<IReadOnlyList<AppointmentResponseDto>>.Success(result);
         }

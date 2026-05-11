@@ -9,6 +9,8 @@ using PsychoSupCenterBackend.Domain.Entities;
 using PsychoSupCenterBackend.Infrasructure.Photos;
 using PsychoSupCenterBackend.Persistence;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.SignalR;
+using PsychoSupCenterBackend.Infrasructure.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +41,7 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
 builder.Services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 

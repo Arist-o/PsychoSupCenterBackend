@@ -8,5 +8,9 @@ public sealed record ChatRoomResponseDto(
     ChatType Type,
     DateTime CreatedAt,
     int ParticipantCount,
-    int UnreadCount
+    int UnreadCount,
+    string? ParticipantName = null,
+    string? ParticipantAvatar = null,
+    string? LastMessage = null,
+    DateTime? LastMessageTime = null
 );

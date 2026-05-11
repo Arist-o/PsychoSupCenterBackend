@@ -14,5 +14,11 @@ public sealed record AppointmentResponseDto(
     AppointmentStatus Status,
     string Type,
     string? Notes,
-    DateTime CreatedAt
+    DateTime CreatedAt,
+    string? DoctorName = null,
+    string? DoctorAvatar = null,
+    string? Specialization = null,
+    string? Service = null,
+    string? PatientName = null,
+    string? PatientAvatar = null
 );

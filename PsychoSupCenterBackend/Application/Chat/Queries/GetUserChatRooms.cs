@@ -27,20 +27,40 @@ public static class GetUserChatRooms
         {
             var rooms = await unitOfWork.ChatParticipants
                 .Query()
-                .Include(p => p.ChatRoom)
-                    .ThenInclude(r => r.Participants)
                 .Where(p => p.UserId == request.UserId)
-                .OrderByDescending(p => p.ChatRoom.CreatedAt)
                 .Select(p => new ChatRoomResponseDto(
                     p.ChatRoom.Id,
                     p.ChatRoom.Type,
                     p.ChatRoom.CreatedAt,
                     p.ChatRoom.Participants.Count,
                     p.ChatRoom.Messages.Count(m =>
-                        m.SenderId != request.UserId && !m.IsRead && !m.IsDeleted)))
+                        m.SenderId != request.UserId && !m.IsRead && !m.IsDeleted),
+                    p.ChatRoom.Participants
+                        .Where(op => op.UserId != request.UserId)
+                        .Select(op => (op.User.FirstName + " " + op.User.LastName).Trim())
+                        .FirstOrDefault(),
+                    p.ChatRoom.Participants
+                        .Where(op => op.UserId != request.UserId)
+                        .Select(op => op.User.PhotoUrl)
+                        .FirstOrDefault(),
+                    p.ChatRoom.Messages
+                        .Where(m => !m.IsDeleted)
+                        .OrderByDescending(m => m.SentAt)
+                        .Select(m => m.Content)
+                        .FirstOrDefault(),
+                    p.ChatRoom.Messages
+                        .Where(m => !m.IsDeleted)
+                        .OrderByDescending(m => m.SentAt)
+                        .Select(m => (DateTime?)m.SentAt)
+                        .FirstOrDefault()
+                ))
                 .ToListAsync(cancellationToken);
 
-            return Result<IReadOnlyList<ChatRoomResponseDto>>.Success(rooms);
+            var result = rooms
+                .OrderByDescending(r => r.LastMessageTime ?? r.CreatedAt)
+                .ToList();
+
+            return Result<IReadOnlyList<ChatRoomResponseDto>>.Success(result);
         }
     }
 }
