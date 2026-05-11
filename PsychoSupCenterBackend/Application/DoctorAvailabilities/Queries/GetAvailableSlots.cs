@@ -25,10 +25,10 @@ public class GetAvailableSlots
             var date = request.Date.Date;
             var dayOfWeek = date.DayOfWeek;
 
-            var availability = await _unitOfWork.DoctorAvailabilities
-                .FirstOrDefaultAsync(x => x.DoctorProfileId == request.DoctorProfileId && x.Day == dayOfWeek, cancellationToken);
+            var availabilities = await _unitOfWork.DoctorAvailabilities
+                .FindAsync(x => x.DoctorProfileId == request.DoctorProfileId && x.Day == dayOfWeek, cancellationToken);
 
-            if (availability == null)
+            if (!availabilities.Any())
             {
                 return Result<List<TimeSpan>>.Success(new List<TimeSpan>());
             }
@@ -42,32 +42,36 @@ public class GetAvailableSlots
                             && x.Status != AppointmentStatus.Cancelled, cancellationToken);
 
             var availableSlots = new List<TimeSpan>();
-            var currentSlotStart = availability.StartTime;
             var durationSpan = TimeSpan.FromMinutes(request.DurationMinutes);
 
-            while (currentSlotStart.Add(durationSpan) <= availability.EndTime)
+            foreach (var availability in availabilities)
             {
-                var slotEnd = currentSlotStart.Add(durationSpan);
-                var slotStartDateTime = date.Add(currentSlotStart);
-                var slotEndDateTime = date.Add(slotEnd);
+                var currentSlotStart = availability.StartTime;
 
-                bool isOverlapWithAppointment = appointments.Any(a => 
-                    a.ScheduledAt < slotEndDateTime && 
-                    a.ScheduledAt.AddMinutes(a.DurationMinutes) > slotStartDateTime);
-
-                bool isOverlapWithUnavailability = unavailabilities.Any(u => 
-                    u.StartDate < slotEndDateTime && 
-                    u.EndDate > slotStartDateTime);
-
-                if (!isOverlapWithAppointment && !isOverlapWithUnavailability)
+                while (currentSlotStart.Add(durationSpan) <= availability.EndTime)
                 {
-                    availableSlots.Add(currentSlotStart);
-                }
+                    var slotEnd = currentSlotStart.Add(durationSpan);
+                    var slotStartDateTime = date.Add(currentSlotStart);
+                    var slotEndDateTime = date.Add(slotEnd);
 
-                currentSlotStart = currentSlotStart.Add(durationSpan);
+                    bool isOverlapWithAppointment = appointments.Any(a => 
+                        a.ScheduledAt < slotEndDateTime && 
+                        a.ScheduledAt.AddMinutes(a.DurationMinutes) > slotStartDateTime);
+
+                    bool isOverlapWithUnavailability = unavailabilities.Any(u => 
+                        u.StartDate < slotEndDateTime && 
+                        u.EndDate > slotStartDateTime);
+
+                    if (!isOverlapWithAppointment && !isOverlapWithUnavailability)
+                    {
+                        availableSlots.Add(currentSlotStart);
+                    }
+
+                    currentSlotStart = currentSlotStart.Add(durationSpan);
+                }
             }
 
-            return Result<List<TimeSpan>>.Success(availableSlots);
+            return Result<List<TimeSpan>>.Success(availableSlots.OrderBy(s => s).ToList());
         }
     }
 }
