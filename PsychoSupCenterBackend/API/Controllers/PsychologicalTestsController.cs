@@ -16,13 +16,13 @@ public class PsychologicalTestsController : BaseApiController
         return HandleResult(await Mediator.Send(new GetAllPsychologicalTests.Query(page, pageSize)));
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult<PsychologicalTestResponseDto>> GetById(Guid id)
     {
         return HandleResult(await Mediator.Send(new GetPsychologicalTestById.Query(id)));
     }
 
-    [HttpGet("by-patient/{patientProfileId}")]
+    [HttpGet("by-patient/{patientProfileId:guid}")]
     public async Task<ActionResult<IReadOnlyList<PsychologicalTestResponseDto>>> GetByPatientId(Guid patientProfileId)
     {
         return HandleResult(await Mediator.Send(new GetTestsByPatientId.Query(patientProfileId)));
@@ -34,13 +34,13 @@ public class PsychologicalTestsController : BaseApiController
         return HandleResult(await Mediator.Send(new CreatePsychologicalTest.Command(dto)));
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     public async Task<ActionResult<PsychologicalTestResponseDto>> Update(Guid id, [FromBody] UpdatePsychologicalTestDto dto)
     {
         return HandleResult(await Mediator.Send(new UpdatePsychologicalTest.Command(id, dto)));
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<ActionResult<bool>> Delete(Guid id)
     {
         return HandleResult(await Mediator.Send(new DeletePsychologicalTest.Command(id)));

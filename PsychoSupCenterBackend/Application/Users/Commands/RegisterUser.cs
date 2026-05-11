@@ -71,7 +71,7 @@ public static class RegisterUser
                 Email = request.Dto.Email.ToLowerInvariant(),
                 FirstName = request.Dto.FirstName,
                 LastName = request.Dto.LastName,
-                PhoneNumber = request.Dto.PhoneNumber ?? string.Empty,
+                PhoneNumber = request.Dto.PhoneNumber,
                 Role = request.Dto.Role,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow,
@@ -100,7 +100,7 @@ public static class RegisterUser
                 {
                     Id = Guid.NewGuid(),
                     UserId = user.Id,
-                    Type = PatientType.Standard,
+                    Type = request.Dto.PatientType ?? PatientType.Standard,
                     DateOfBirth = DateTime.UtcNow,
                 };
                 await unitOfWork.PatientProfiles.AddAsync(patientProfile, cancellationToken);

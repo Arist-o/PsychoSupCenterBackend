@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PsychoSupCenterBackend.API.Controllers;
 using PsychoSupCenterBackend.Application.DoctorServices.Commands;
@@ -18,14 +18,14 @@ public class DoctorServicesController : BaseApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult<DoctorServiceResponseDto>> GetById(Guid id)
     {
         return HandleResult(await Mediator.Send(new GetDoctorServiceById.Query(id)));
     }
 
     [AllowAnonymous]
-    [HttpGet("by-doctor/{doctorProfileId}")]
+    [HttpGet("by-doctor/{doctorProfileId:guid}")]
     public async Task<ActionResult<IReadOnlyList<DoctorServiceResponseDto>>> GetByDoctorId(Guid doctorProfileId)
     {
         return HandleResult(await Mediator.Send(new GetServicesByDoctorId.Query(doctorProfileId)));
@@ -37,13 +37,13 @@ public class DoctorServicesController : BaseApiController
         return HandleResult(await Mediator.Send(new CreateDoctorService.Command(doctorProfileId, dto)));
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     public async Task<ActionResult<DoctorServiceResponseDto>> Update(Guid id, [FromBody] UpdateDoctorServiceDto dto)
     {
         return HandleResult(await Mediator.Send(new UpdateDoctorService.Command(id, dto)));
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<ActionResult<bool>> Delete(Guid id)
     {
         return HandleResult(await Mediator.Send(new DeleteDoctorService.Command(id)));

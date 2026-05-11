@@ -12,14 +12,14 @@ namespace PsychoSupCenterBackend.API.Controllers;
 public class DoctorCertificatesController : BaseApiController
 {
     [AllowAnonymous]
-    [HttpGet("by-doctor/{doctorProfileId}")]
+    [HttpGet("by-doctor/{doctorProfileId:guid}")]
     public async Task<ActionResult<IReadOnlyList<DoctorCertificateResponseDto>>> GetByDoctorId(Guid doctorProfileId)
     {
         return HandleResult(await Mediator.Send(new GetCertificatesByDoctorId.Query(doctorProfileId)));
     }
 
     [AllowAnonymous]
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult<DoctorCertificateResponseDto>> GetById(Guid id)
     {
         return HandleResult(await Mediator.Send(new GetDoctorCertificateById.Query(id)));
@@ -37,13 +37,13 @@ public class DoctorCertificatesController : BaseApiController
         return HandleResult(await Mediator.Send(new UploadDoctorCertificate.Command(doctorProfileId, file)));
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     public async Task<ActionResult<DoctorCertificateResponseDto>> Update(Guid id, [FromBody] UpdateDoctorCertificateDto dto)
     {
         return HandleResult(await Mediator.Send(new UpdateDoctorCertificate.Command(id, dto)));
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<ActionResult<bool>> Remove(Guid id)
     {
         return HandleResult(await Mediator.Send(new RemoveDoctorCertificate.Command(id)));

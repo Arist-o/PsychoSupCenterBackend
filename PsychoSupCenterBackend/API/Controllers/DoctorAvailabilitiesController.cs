@@ -12,7 +12,7 @@ namespace PsychoSupCenterBackend.API.Controllers;
 public class DoctorAvailabilitiesController : BaseApiController
 {
     [AllowAnonymous]
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult<DoctorAvailabilityResponseDto>> GetById(Guid id)
     {
         return HandleResult(await Mediator.Send(new GetAvailabilityById.Query(id)));
@@ -31,13 +31,13 @@ public class DoctorAvailabilitiesController : BaseApiController
         return HandleResult(await Mediator.Send(new CreateDoctorAvailability.Command(dto)));
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     public async Task<ActionResult<DoctorAvailabilityResponseDto>> Update(Guid id, [FromBody] UpdateDoctorAvailabilityDto dto)
     {
         return HandleResult(await Mediator.Send(new UpdateDoctorAvailability.Command(id, dto)));
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<ActionResult<bool>> Delete(Guid id)
     {
         return HandleResult(await Mediator.Send(new DeleteDoctorAvailability.Command(id)));

@@ -10,20 +10,20 @@ namespace PsychoSupCenterBackend.API.Controllers;
 [Authorize]
 public class ReviewsController : BaseApiController
 {
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult<ReviewResponseDto>> GetById(Guid id)
     {
         return HandleResult(await Mediator.Send(new GetReviewById.Query(id)));
     }
 
     [AllowAnonymous]
-    [HttpGet("by-doctor/{doctorProfileId}")]
+    [HttpGet("by-doctor/{doctorProfileId:guid}")]
     public async Task<ActionResult<IReadOnlyList<ReviewResponseDto>>> GetByDoctorId(Guid doctorProfileId)
     {
         return HandleResult(await Mediator.Send(new GetReviewsByDoctorId.Query(doctorProfileId)));
     }
 
-    [HttpGet("by-patient/{patientProfileId}")]
+    [HttpGet("by-patient/{patientProfileId:guid}")]
     public async Task<ActionResult<IReadOnlyList<ReviewResponseDto>>> GetByPatientId(Guid patientProfileId)
     {
         return HandleResult(await Mediator.Send(new GetReviewsByPatientId.Query(patientProfileId)));
@@ -35,13 +35,13 @@ public class ReviewsController : BaseApiController
         return HandleResult(await Mediator.Send(new CreateReview.Command(dto)));
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     public async Task<ActionResult<ReviewResponseDto>> Update(Guid id, [FromBody] UpdateReviewDto dto)
     {
         return HandleResult(await Mediator.Send(new UpdateReview.Command(id, dto)));
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<ActionResult<bool>> Delete(Guid id)
     {
         return HandleResult(await Mediator.Send(new DeleteReview.Command(id)));

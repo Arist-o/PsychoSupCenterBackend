@@ -9,5 +9,6 @@ public sealed record RegisterDto(
     string FirstName,
     string LastName,
     string? PhoneNumber,
+    PatientType? PatientType,
     UserRole Role
 );

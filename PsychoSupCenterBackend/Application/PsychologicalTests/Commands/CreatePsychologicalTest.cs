@@ -46,7 +46,7 @@ public static class CreatePsychologicalTest
                     "Тест можна призначити лише для активного або завершеного запису.");
 
             var alreadyExists = await unitOfWork.PsychologicalTests.AnyAsync(
-                t => t.AppointmentId == request.Dto.AppointmentId, cancellationToken);
+                t => t.AppointmentId == request.Dto.AppointmentId && t.TestType == request.Dto.TestType, cancellationToken);
 
             if (alreadyExists)
                 return Result<PsychologicalTestResponseDto>.Failure(
