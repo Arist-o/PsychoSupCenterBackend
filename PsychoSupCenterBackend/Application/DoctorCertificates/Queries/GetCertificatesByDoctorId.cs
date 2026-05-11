@@ -24,7 +24,13 @@ public static class GetCertificatesByDoctorId
             var result = certs
                 .OrderByDescending(c => c.AddedAt)
                 .Select(c => new DoctorCertificateResponseDto(
-                    c.Id, c.DoctorProfileId, c.CertificateUrl, c.AddedAt))
+                    c.Id, 
+                    c.DoctorProfileId, 
+                    c.Name,
+                    c.IssuingOrganization,
+                    c.IssueDate,
+                    c.CertificateUrl, 
+                    c.AddedAt))
                 .ToList();
 
             return Result<IReadOnlyList<DoctorCertificateResponseDto>>.Success(result);

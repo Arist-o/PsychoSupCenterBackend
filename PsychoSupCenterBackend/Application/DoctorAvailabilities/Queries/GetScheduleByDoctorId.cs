@@ -24,7 +24,7 @@ public static class GetScheduleByDoctorId
             var result = slots
                 .OrderBy(a => a.Day).ThenBy(a => a.StartTime)
                 .Select(a => new DoctorAvailabilityResponseDto(
-                    a.Id, a.DoctorProfileId, a.Day, a.StartTime, a.EndTime))
+                    a.Id, a.DoctorProfileId, a.Day, a.StartTime, a.EndTime, true))
                 .ToList();
 
             return Result<IReadOnlyList<DoctorAvailabilityResponseDto>>.Success(result);

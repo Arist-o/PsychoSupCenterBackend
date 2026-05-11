@@ -1,4 +1,6 @@
-﻿using PsychoSupCenterBackend.Domain.Enums;
+﻿using PsychoSupCenterBackend.Application.DoctorCertificates.DTOs;
+using PsychoSupCenterBackend.Application.DoctorServices.DTOs;
+using PsychoSupCenterBackend.Domain.Enums;
 
 namespace PsychoSupCenterBackend.Application.Doctors.DTOs;
 
@@ -14,5 +16,8 @@ public sealed record DoctorProfileResponseDto(
     int ExperienceYears,
     DoctorStatus Status,
     double AverageRating,
-    DateTime UpdatedAt
+    DateTime UpdatedAt,
+    IReadOnlyList<string> Specializations = null!,
+    IReadOnlyList<DoctorServiceResponseDto> Services = null!,
+    IReadOnlyList<DoctorCertificateResponseDto> Certificates = null!
 );

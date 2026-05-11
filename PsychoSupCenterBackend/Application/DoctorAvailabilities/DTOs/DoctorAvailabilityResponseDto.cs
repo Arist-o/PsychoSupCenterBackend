@@ -1,10 +1,11 @@
-﻿
+
 namespace PsychoSupCenterBackend.Application.DoctorAvailabilities.DTOs;
 
 public sealed record DoctorAvailabilityResponseDto(
     Guid Id,
     Guid DoctorProfileId,
-    DayOfWeek Day,
+    DayOfWeek DayOfWeek,
     TimeSpan StartTime,
-    TimeSpan EndTime
+    TimeSpan EndTime,
+    bool IsAvailable = true
 );

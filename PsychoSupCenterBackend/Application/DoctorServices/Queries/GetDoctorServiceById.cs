@@ -28,7 +28,7 @@ public static class GetDoctorServiceById
                 return Result<DoctorServiceResponseDto>.Failure("Послугу не знайдено.");
 
             return Result<DoctorServiceResponseDto>.Success(new DoctorServiceResponseDto(
-                service.Id, service.DoctorProfileId, service.ServiceName, service.Price));
+                service.Id, service.DoctorProfileId, service.ServiceName, service.Price, service.Description, service.DurationMinutes));
         }
     }
 }

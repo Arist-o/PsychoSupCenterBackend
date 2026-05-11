@@ -6,7 +6,7 @@ public class Review : BaseEntity
 {
     public Guid DoctorProfileId { get; set; }
     public Guid PatientProfileId { get; set; }
-    public Guid AppointmentId { get; set; }
+    public Guid? AppointmentId { get; set; }
     public int Rating { get; set; }
     public string? Comment { get; set; }
     public bool IsAnonymous { get; set; } = false;
@@ -14,5 +14,5 @@ public class Review : BaseEntity
 
     public DoctorProfile DoctorProfile { get; set; } = null!;
     public PatientProfile PatientProfile { get; set; } = null!;
-    public Appointment Appointment { get; set; } = null!;
+    public Appointment? Appointment { get; set; }
 }

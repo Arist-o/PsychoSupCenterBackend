@@ -42,6 +42,9 @@ public static class AddDoctorCertificate
             {
                 Id = Guid.NewGuid(),
                 DoctorProfileId = request.Dto.DoctorProfileId,
+                Name = "Unnamed Certificate", // Default or update DTO
+                IssuingOrganization = "Unknown",
+                IssueDate = DateTime.UtcNow,
                 CertificateUrl = request.Dto.CertificateUrl,
                 AddedAt = DateTime.UtcNow,
             };
@@ -50,7 +53,13 @@ public static class AddDoctorCertificate
 
             return Result<DoctorCertificateResponseDto>.Success(
                 new DoctorCertificateResponseDto(
-                    cert.Id, cert.DoctorProfileId, cert.CertificateUrl, cert.AddedAt));
+                    cert.Id, 
+                    cert.DoctorProfileId, 
+                    cert.Name,
+                    cert.IssuingOrganization,
+                    cert.IssueDate,
+                    cert.CertificateUrl, 
+                    cert.AddedAt));
         }
     }
 }

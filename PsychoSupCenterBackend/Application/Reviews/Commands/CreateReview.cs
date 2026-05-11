@@ -18,7 +18,6 @@ public static class CreateReview
         {
             RuleFor(x => x.Dto.Rating).InclusiveBetween(1, 5).WithMessage("Рейтинг має бути від 1 до 5.");
             RuleFor(x => x.Dto.Comment).MaximumLength(1000);
-            RuleFor(x => x.Dto.AppointmentId).NotEmpty();
         }
     }
 
@@ -26,8 +25,11 @@ public static class CreateReview
     {
         public async Task<Result<ReviewResponseDto>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var existingReview = await unitOfWork.Reviews.AnyAsync(r => r.AppointmentId == request.Dto.AppointmentId, cancellationToken);
-            if (existingReview) return Result<ReviewResponseDto>.Failure("Відгук для цього запису вже існує.");
+            if (request.Dto.AppointmentId.HasValue)
+            {
+                var existingReview = await unitOfWork.Reviews.AnyAsync(r => r.AppointmentId == request.Dto.AppointmentId.Value, cancellationToken);
+                if (existingReview) return Result<ReviewResponseDto>.Failure("Відгук для цього запису вже існує.");
+            }
 
             var review = new Review
             {

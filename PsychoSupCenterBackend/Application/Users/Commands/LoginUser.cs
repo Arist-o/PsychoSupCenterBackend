@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using PsychoSupCenterBackend.Application.Common.Behaviors;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
 using PsychoSupCenterBackend.Application.Common.Models;
@@ -36,9 +37,12 @@ public static class LoginUser
         public async Task<Result<AuthResponseDto>> Handle(
             Command request, CancellationToken cancellationToken)
         {
-            var user = await unitOfWork.Users.FirstOrDefaultAsync(
-                u => u.Email == request.Dto.Email.ToLowerInvariant() && u.IsActive,
-                cancellationToken);
+            var user = await unitOfWork.Users.Query()
+                .Include(u => u.DoctorProfile)
+                .Include(u => u.PatientProfile)
+                .FirstOrDefaultAsync(
+                    u => u.Email == request.Dto.Email.ToLowerInvariant() && u.IsActive,
+                    cancellationToken);
 
             if (user is null)
                 return Result<AuthResponseDto>.Failure("Невірний Email або пароль.");
@@ -74,7 +78,9 @@ public static class LoginUser
                 Role: user.Role.ToString(),
                 AccessToken: accessToken,
                 RefreshToken: refreshTokenValue,
-                AccessTokenExpiresAt: DateTime.UtcNow.AddMinutes(15)
+                AccessTokenExpiresAt: DateTime.UtcNow.AddMinutes(15),
+                DoctorProfileId: user.DoctorProfile?.Id,
+                PatientProfileId: user.PatientProfile?.Id
             ));
         }
     }

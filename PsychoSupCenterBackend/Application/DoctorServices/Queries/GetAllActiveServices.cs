@@ -26,7 +26,7 @@ public static class GetAllActiveServices
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .Select(s => new DoctorServiceResponseDto(
-                    s.Id, s.DoctorProfileId, s.ServiceName, s.Price))
+                    s.Id, s.DoctorProfileId, s.ServiceName, s.Price, s.Description, s.DurationMinutes))
                 .ToListAsync(cancellationToken);
 
             return Result<IReadOnlyList<DoctorServiceResponseDto>>.Success(services);

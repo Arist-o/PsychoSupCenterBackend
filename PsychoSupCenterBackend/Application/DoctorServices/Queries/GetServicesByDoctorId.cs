@@ -25,7 +25,7 @@ public static class GetServicesByDoctorId
 
             var result = services
                 .Select(s => new DoctorServiceResponseDto(
-                    s.Id, s.DoctorProfileId, s.ServiceName, s.Price))
+                    s.Id, s.DoctorProfileId, s.ServiceName, s.Price, s.Description, s.DurationMinutes))
                 .ToList();
 
             return Result<IReadOnlyList<DoctorServiceResponseDto>>.Success(result);

@@ -24,7 +24,7 @@ public static class GetAvailabilitiesByDoctorId
                 .FindAsync(a => a.DoctorProfileId == request.DoctorProfileId, cancellationToken);
 
             var dtos = availabilities.Select(a =>
-                new DoctorAvailabilityResponseDto(a.Id, a.DoctorProfileId, a.Day, a.StartTime, a.EndTime))
+                new DoctorAvailabilityResponseDto(a.Id, a.DoctorProfileId, a.Day, a.StartTime, a.EndTime, true))
                 .ToList();
 
             return Result<IReadOnlyList<DoctorAvailabilityResponseDto>>.Success(dtos);

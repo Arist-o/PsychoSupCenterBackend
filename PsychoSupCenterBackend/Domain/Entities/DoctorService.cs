@@ -6,6 +6,8 @@ public class DoctorService : BaseEntity
 {
     public Guid DoctorProfileId { get; set; }
     public string ServiceName { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public int DurationMinutes { get; set; } = 60;
     public decimal Price { get; set; }
 
     public DoctorProfile DoctorProfile { get; set; } = null!;

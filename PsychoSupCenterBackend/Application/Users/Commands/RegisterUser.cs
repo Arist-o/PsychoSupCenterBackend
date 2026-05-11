@@ -81,6 +81,9 @@ public static class RegisterUser
             user.PasswordHash = passwordHasher.HashPassword(user, request.Dto.Password);
             await unitOfWork.Users.AddAsync(user, cancellationToken);
 
+            Guid? doctorProfileId = null;
+            Guid? patientProfileId = null;
+
             if (request.Dto.Role == UserRole.Doctor)
             {
                 var doctorProfile = new DoctorProfile
@@ -92,6 +95,7 @@ public static class RegisterUser
                     AverageRating = 0.0,
                     UpdatedAt = DateTime.UtcNow,
                 };
+                doctorProfileId = doctorProfile.Id;
                 await unitOfWork.DoctorProfiles.AddAsync(doctorProfile, cancellationToken);
             }
             else if (request.Dto.Role == UserRole.Patient)
@@ -103,6 +107,7 @@ public static class RegisterUser
                     Type = request.Dto.PatientType ?? PatientType.Standard,
                     DateOfBirth = DateTime.UtcNow,
                 };
+                patientProfileId = patientProfile.Id;
                 await unitOfWork.PatientProfiles.AddAsync(patientProfile, cancellationToken);
             }
 
@@ -130,7 +135,9 @@ public static class RegisterUser
                 Role: user.Role.ToString(),
                 AccessToken: accessToken,
                 RefreshToken: refreshTokenValue,
-                AccessTokenExpiresAt: DateTime.UtcNow.AddMinutes(15) 
+                AccessTokenExpiresAt: DateTime.UtcNow.AddMinutes(15),
+                DoctorProfileId: doctorProfileId,
+                PatientProfileId: patientProfileId
             ));
         }
     }

@@ -26,7 +26,7 @@ public static class GetAppointmentById
             return Result<AppointmentResponseDto>.Success(new AppointmentResponseDto(
                 appt.Id, appt.DoctorProfileId, appt.PatientProfileId, appt.DoctorServiceId,
                 appt.ChatRoomId, appt.BillingId, appt.ScheduledAt, appt.DurationMinutes,
-                appt.Status, appt.Type, appt.Notes, appt.CreatedAt));
+                appt.Status, appt.Type ?? "Consultation", appt.Notes, appt.CreatedAt));
         }
     }
 }

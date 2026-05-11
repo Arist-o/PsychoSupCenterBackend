@@ -32,7 +32,13 @@ public static class GetDoctorCertificateById
 
             return Result<DoctorCertificateResponseDto>.Success(
                 new DoctorCertificateResponseDto(
-                    cert.Id, cert.DoctorProfileId, cert.CertificateUrl, cert.AddedAt));
+                    cert.Id, 
+                    cert.DoctorProfileId, 
+                    cert.Name,
+                    cert.IssuingOrganization,
+                    cert.IssueDate,
+                    cert.CertificateUrl, 
+                    cert.AddedAt));
         }
     }
 }

@@ -19,7 +19,7 @@ public class DoctorAvailabilitiesController : BaseApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("by-doctor/{doctorProfileId}")]
+    [HttpGet("by-doctor/{doctorProfileId:guid}")]
     public async Task<ActionResult<IReadOnlyList<DoctorAvailabilityResponseDto>>> GetByDoctorId(Guid doctorProfileId)
     {
         return HandleResult(await Mediator.Send(new GetAvailabilitiesByDoctorId.Query(doctorProfileId)));
@@ -44,7 +44,7 @@ public class DoctorAvailabilitiesController : BaseApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("schedule/{doctorProfileId}")]
+    [HttpGet("schedule/{doctorProfileId:guid}")]
     public async Task<ActionResult<IReadOnlyList<DoctorAvailabilityResponseDto>>> GetSchedule(Guid doctorProfileId)
     {
         return HandleResult(await Mediator.Send(new GetScheduleByDoctorId.Query(doctorProfileId)));
@@ -56,20 +56,20 @@ public class DoctorAvailabilitiesController : BaseApiController
         return HandleResult(await Mediator.Send(new AddDoctorUnavailability.Command(dto)));
     }
 
-    [HttpPut("unavailability/{id}")]
+    [HttpPut("unavailability/{id:guid}")]
     public async Task<ActionResult<DoctorUnavailabilityResponseDto>> UpdateUnavailability(Guid id, [FromBody] UpdateUnavailabilityBodyDto dto)
     {
         return HandleResult(await Mediator.Send(new UpdateDoctorUnavailability.Command(id, dto)));
     }
 
-    [HttpDelete("unavailability/{id}")]
+    [HttpDelete("unavailability/{id:guid}")]
     public async Task<ActionResult<bool>> DeleteUnavailability(Guid id)
     {
         return HandleResult(await Mediator.Send(new DeleteDoctorUnavailability.Command(id)));
     }
 
     [AllowAnonymous]
-    [HttpGet("slots/{doctorProfileId}")]
+    [HttpGet("slots/{doctorProfileId:guid}")]
     public async Task<ActionResult<List<TimeSpan>>> GetAvailableSlots(Guid doctorProfileId, [FromQuery] DateTime date, [FromQuery] int durationMinutes = 60)
     {
         return HandleResult(await Mediator.Send(new GetAvailableSlots.Query(doctorProfileId, date, durationMinutes)));

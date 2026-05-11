@@ -48,13 +48,15 @@ public static class CreateDoctorService
                 Id = Guid.NewGuid(),
                 DoctorProfileId = request.DoctorProfileId,
                 ServiceName = request.Dto.ServiceName, 
+                Description = request.Dto.Description,
+                DurationMinutes = request.Dto.DurationMinutes,
                 Price = request.Dto.Price,             
             };
 
             await unitOfWork.DoctorServices.AddAsync(service, cancellationToken);
 
             return Result<DoctorServiceResponseDto>.Success(new DoctorServiceResponseDto(
-                service.Id, service.DoctorProfileId, service.ServiceName, service.Price));
+                service.Id, service.DoctorProfileId, service.ServiceName, service.Price, service.Description, service.DurationMinutes));
         }
     }
 }

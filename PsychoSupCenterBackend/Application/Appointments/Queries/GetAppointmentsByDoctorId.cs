@@ -29,7 +29,7 @@ public static class GetAppointmentsByDoctorId
                 .Select(appt => new AppointmentResponseDto(
                     appt.Id, appt.DoctorProfileId, appt.PatientProfileId, appt.DoctorServiceId,
                     appt.ChatRoomId, appt.BillingId, appt.ScheduledAt, appt.DurationMinutes,
-                    appt.Status, appt.Type, appt.Notes, appt.CreatedAt)).ToList();
+                    appt.Status, appt.Type ?? "Consultation", appt.Notes, appt.CreatedAt)).ToList();
 
             return Result<IReadOnlyList<AppointmentResponseDto>>.Success(result);
         }

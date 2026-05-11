@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using PsychoSupCenterBackend.Application.Common.Behaviors;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
 using PsychoSupCenterBackend.Application.Common.Models;
@@ -20,13 +21,25 @@ public static class GetUserById
     {
         public async Task<Result<UserResponseDto>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var user = await unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
+            var user = await unitOfWork.Users.Query()
+                .Include(u => u.DoctorProfile)
+                .Include(u => u.PatientProfile)
+                .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
 
             if (user is null)
                 return Result<UserResponseDto>.Failure("Користувача не знайдено.");
 
             return Result<UserResponseDto>.Success(new UserResponseDto(
-                user.Id, user.Email, user.FirstName, user.LastName, user.PhoneNumber!, user.PhotoUrl, user.Role.ToString(), user.IsActive));
+                user.Id, 
+                user.Email, 
+                user.FirstName, 
+                user.LastName, 
+                user.PhoneNumber!, 
+                user.PhotoUrl, 
+                user.Role.ToString(), 
+                user.IsActive,
+                user.DoctorProfile?.Id,
+                user.PatientProfile?.Id));
         }
     }
 }

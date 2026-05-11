@@ -11,7 +11,12 @@ namespace PsychoSupCenterBackend.Application.DoctorCertificates.Commands;
 
 public static class UploadDoctorCertificate
 {
-    public sealed record Command(Guid DoctorProfileId, IFormFile File)
+    public sealed record Command(
+        Guid DoctorProfileId, 
+        string Name,
+        string IssuingOrganization,
+        DateTime IssueDate,
+        IFormFile File)
         : ICommand<Result<DoctorCertificateResponseDto>>;
 
     public sealed class Validator : AbstractValidator<Command>
@@ -19,6 +24,9 @@ public static class UploadDoctorCertificate
         public Validator()
         {
             RuleFor(x => x.DoctorProfileId).NotEmpty();
+            RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
+            RuleFor(x => x.IssuingOrganization).NotEmpty().MaximumLength(200);
+            RuleFor(x => x.IssueDate).NotEmpty();
             RuleFor(x => x.File).NotNull().WithMessage("Файл не обрано.");
             RuleFor(x => x.File.Length).LessThanOrEqualTo(5 * 1024 * 1024).WithMessage("Розмір файлу не повинен перевищувати 5МБ.");
             RuleFor(x => x.File.ContentType).Must(x => x.StartsWith("image/") || x == "application/pdf")
@@ -46,6 +54,9 @@ public static class UploadDoctorCertificate
             {
                 Id = Guid.NewGuid(),
                 DoctorProfileId = request.DoctorProfileId,
+                Name = request.Name,
+                IssuingOrganization = request.IssuingOrganization,
+                IssueDate = request.IssueDate,
                 CertificateUrl = uploadResult.Url,
                 AddedAt = DateTime.UtcNow,
             };
@@ -54,7 +65,13 @@ public static class UploadDoctorCertificate
 
             return Result<DoctorCertificateResponseDto>.Success(
                 new DoctorCertificateResponseDto(
-                    cert.Id, cert.DoctorProfileId, cert.CertificateUrl, cert.AddedAt));
+                    cert.Id, 
+                    cert.DoctorProfileId, 
+                    cert.Name,
+                    cert.IssuingOrganization,
+                    cert.IssueDate,
+                    cert.CertificateUrl, 
+                    cert.AddedAt));
         }
     }
 }

@@ -5,5 +5,7 @@ public sealed record DoctorServiceResponseDto(
     Guid Id,
     Guid DoctorProfileId,
     string ServiceName,
-    decimal Price
+    decimal Price,
+    string? Description = null,
+    int DurationMinutes = 60
 );

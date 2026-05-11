@@ -18,7 +18,10 @@ public static class UpdateDoctorCertificate
         public Validator()
         {
             RuleFor(x => x.CertificateId).NotEmpty();
-            RuleFor(x => x.Dto.NewUrl)
+            RuleFor(x => x.Dto.Name).NotEmpty().MaximumLength(200);
+            RuleFor(x => x.Dto.IssuingOrganization).NotEmpty().MaximumLength(200);
+            RuleFor(x => x.Dto.IssueDate).NotEmpty();
+            RuleFor(x => x.Dto.CertificateUrl)
                 .NotEmpty().MaximumLength(2048)
                 .Must(url => Uri.TryCreate(url, UriKind.Absolute, out _))
                 .WithMessage("Некоректний URL.");
@@ -37,12 +40,22 @@ public static class UpdateDoctorCertificate
             if (cert is null)
                 return Result<DoctorCertificateResponseDto>.Failure("Сертифікат не знайдено.");
 
-            cert.CertificateUrl = request.Dto.NewUrl;
+            cert.Name = request.Dto.Name;
+            cert.IssuingOrganization = request.Dto.IssuingOrganization;
+            cert.IssueDate = request.Dto.IssueDate;
+            cert.CertificateUrl = request.Dto.CertificateUrl;
+
             unitOfWork.DoctorCertificates.Update(cert);
 
             return Result<DoctorCertificateResponseDto>.Success(
                 new DoctorCertificateResponseDto(
-                    cert.Id, cert.DoctorProfileId, cert.CertificateUrl, cert.AddedAt));
+                    cert.Id, 
+                    cert.DoctorProfileId, 
+                    cert.Name,
+                    cert.IssuingOrganization,
+                    cert.IssueDate,
+                    cert.CertificateUrl, 
+                    cert.AddedAt));
         }
     }
 }

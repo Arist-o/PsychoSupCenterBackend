@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using PsychoSupCenterBackend.Application.Common.Behaviors;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
 using PsychoSupCenterBackend.Application.Common.Models;
+using PsychoSupCenterBackend.Application.DoctorCertificates.DTOs;
 using PsychoSupCenterBackend.Application.Doctors.DTOs;
+using PsychoSupCenterBackend.Application.DoctorServices.DTOs;
 using PsychoSupCenterBackend.Domain.Enums;
 
 namespace PsychoSupCenterBackend.Application.Doctors.Queries;
@@ -27,6 +29,9 @@ public static class GetAllDoctors
             var query = unitOfWork.DoctorProfiles
                 .Query()
                 .Include(d => d.User)
+                .Include(d => d.Specializations)
+                .Include(d => d.Services)
+                .Include(d => d.Certificates)
                 .Where(d => d.User.IsActive);
 
             if (request.StatusFilter.HasValue)
@@ -48,7 +53,13 @@ public static class GetAllDoctors
                     (int)((DateTime.UtcNow - d.CareerStartDate).TotalDays / 365.25),
                     d.Status,
                     d.AverageRating,
-                    d.UpdatedAt))
+                    d.UpdatedAt,
+                    d.Specializations.Select(s => s.Name).ToList(),
+                    d.Services.Select(s => new DoctorServiceResponseDto(
+                        s.Id, s.DoctorProfileId, s.ServiceName, s.Price, s.Description, s.DurationMinutes)).ToList(),
+                    d.Certificates.Select(c => new DoctorCertificateResponseDto(
+                        c.Id, c.DoctorProfileId, c.Name, c.IssuingOrganization, c.IssueDate, c.CertificateUrl, c.AddedAt)).ToList()
+                ))
                 .ToListAsync(cancellationToken);
 
             return Result<IReadOnlyList<DoctorProfileResponseDto>>.Success(doctors);

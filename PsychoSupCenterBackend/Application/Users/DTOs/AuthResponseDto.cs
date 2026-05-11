@@ -8,5 +8,7 @@ public sealed record AuthResponseDto(
     string Role,
     string AccessToken,
     string RefreshToken,
-    DateTime AccessTokenExpiresAt
+    DateTime AccessTokenExpiresAt,
+    Guid? DoctorProfileId = null,
+    Guid? PatientProfileId = null
 );

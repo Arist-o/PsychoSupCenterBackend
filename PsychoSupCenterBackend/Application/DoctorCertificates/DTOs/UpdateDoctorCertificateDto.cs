@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Application.DoctorCertificates.DTOs
-{
-    public sealed record UpdateDoctorCertificateDto(string NewUrl);
-}
+namespace Application.DoctorCertificates.DTOs;
+
+public sealed record UpdateDoctorCertificateDto(
+    string Name,
+    string IssuingOrganization,
+    DateTime IssueDate,
+    string CertificateUrl
+);

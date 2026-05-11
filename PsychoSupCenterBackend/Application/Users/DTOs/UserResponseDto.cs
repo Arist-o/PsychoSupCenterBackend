@@ -8,5 +8,7 @@ public sealed record UserResponseDto(
     string PhoneNumber,
     string? PhotoUrl,
     string Role,
-    bool IsActive
+    bool IsActive,
+    Guid? DoctorProfileId = null,
+    Guid? PatientProfileId = null
 );
