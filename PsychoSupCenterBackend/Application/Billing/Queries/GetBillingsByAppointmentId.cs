@@ -35,14 +35,21 @@ public static class GetBillingsByAppointmentId
             var billing = await unitOfWork.Billings
                 .Query()
                 .Include(b => b.DoctorService)
+                .Include(b => b.Appointment).ThenInclude(a => a.DoctorProfile).ThenInclude(d => d.User)
                 .FirstOrDefaultAsync(b => b.Id == appointment.BillingId.Value, cancellationToken);
 
             if (billing is null)
                 return Result<BillingResponseDto?>.Success(null);
 
             return Result<BillingResponseDto?>.Success(new BillingResponseDto(
-                billing.Id, billing.DoctorServiceId, billing.DoctorService.ServiceName,
-                billing.Amount, billing.PaymentStatus, billing.CreatedAt, billing.PaidAt));
+                billing.Id, 
+                billing.DoctorServiceId, 
+                billing.DoctorService.ServiceName,
+                billing.Amount, 
+                billing.PaymentStatus, 
+                billing.CreatedAt, 
+                billing.PaidAt,
+                billing.Appointment != null ? $"{billing.Appointment.DoctorProfile.User.FirstName} {billing.Appointment.DoctorProfile.User.LastName}" : ""));
         }
     }
 }

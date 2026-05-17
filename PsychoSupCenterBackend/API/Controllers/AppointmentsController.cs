@@ -10,6 +10,13 @@ namespace PsychoSupCenterBackend.API.Controllers;
 [Authorize]
 public class AppointmentsController : BaseApiController
 {
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<AppointmentResponseDto>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 100)
+    {
+        return HandleResult(await Mediator.Send(new GetAllAppointments.Query(page, pageSize)));
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<AppointmentResponseDto>> GetById(Guid id)
     {

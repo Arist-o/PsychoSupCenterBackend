@@ -27,14 +27,21 @@ public static class GetBillingById
             var billing = await unitOfWork.Billings
                 .Query()
                 .Include(b => b.DoctorService)
+                .Include(b => b.Appointment).ThenInclude(a => a.DoctorProfile).ThenInclude(d => d.User)
                 .FirstOrDefaultAsync(b => b.Id == request.BillingId, cancellationToken);
 
             if (billing is null)
                 return Result<BillingResponseDto>.Failure("Білінг не знайдено.");
 
             return Result<BillingResponseDto>.Success(new BillingResponseDto(
-                billing.Id, billing.DoctorServiceId, billing.DoctorService.ServiceName,
-                billing.Amount, billing.PaymentStatus, billing.CreatedAt, billing.PaidAt));
+                billing.Id, 
+                billing.DoctorServiceId, 
+                billing.DoctorService.ServiceName,
+                billing.Amount, 
+                billing.PaymentStatus, 
+                billing.CreatedAt, 
+                billing.PaidAt,
+                billing.Appointment != null ? $"{billing.Appointment.DoctorProfile.User.FirstName} {billing.Appointment.DoctorProfile.User.LastName}" : ""));
         }
     }
 }

@@ -1,5 +1,3 @@
-﻿
-using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PsychoSupCenterBackend.Application.Billing.DTOs;
@@ -9,27 +7,17 @@ using PsychoSupCenterBackend.Application.Common.Models;
 
 namespace PsychoSupCenterBackend.Application.Billing.Queries;
 
-public static class GetBillingsByPatientId
+public static class GetAllBillings
 {
-    public sealed record Query(Guid PatientProfileId) : IQuery<Result<IReadOnlyList<BillingResponseDto>>>;
+    public sealed record Query : IQuery<Result<IReadOnlyList<BillingResponseDto>>>;
 
-    public sealed class Validator : AbstractValidator<Query>
+    public sealed class Handler(IUnitOfWork unitOfWork) : IRequestHandler<Query, Result<IReadOnlyList<BillingResponseDto>>>
     {
-        public Validator() => RuleFor(x => x.PatientProfileId).NotEmpty();
-    }
-
-    public sealed class Handler(IUnitOfWork unitOfWork)
-        : IRequestHandler<Query, Result<IReadOnlyList<BillingResponseDto>>>
-    {
-        public async Task<Result<IReadOnlyList<BillingResponseDto>>> Handle(
-            Query request, CancellationToken cancellationToken)
+        public async Task<Result<IReadOnlyList<BillingResponseDto>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var billings = await unitOfWork.Billings
-                .Query()
+            var billings = await unitOfWork.Billings.Query()
                 .Include(b => b.DoctorService)
-                .Include(b => b.Appointment)
-                .Where(b => b.Appointment != null
-                         && b.Appointment.PatientProfileId == request.PatientProfileId)
+                .Include(b => b.Appointment).ThenInclude(a => a.DoctorProfile).ThenInclude(d => d.User)
                 .OrderByDescending(b => b.CreatedAt)
                 .Select(b => new BillingResponseDto(
                     b.Id, 

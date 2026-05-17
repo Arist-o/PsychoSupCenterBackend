@@ -12,6 +12,13 @@ namespace PsychoSupCenterBackend.API.Controllers;
 [Authorize]
 public class BillingController : BaseApiController
 {
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<BillingResponseDto>>> GetAll()
+    {
+        return HandleResult(await Mediator.Send(new GetAllBillings.Query()));
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<BillingResponseDto>> GetById(Guid id)
     {

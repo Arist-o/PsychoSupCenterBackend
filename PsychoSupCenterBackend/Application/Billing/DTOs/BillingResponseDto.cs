@@ -10,5 +10,6 @@ public sealed record BillingResponseDto(
     decimal Amount,
     PaymentStatus PaymentStatus,
     DateTime CreatedAt,
-    DateTime? PaidAt
+    DateTime? PaidAt,
+    string? DoctorName = null
 );

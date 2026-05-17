@@ -2,10 +2,12 @@
 using Infrasructure.MongoDb;
 using Infrasructure.Notifications;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
+using PsychoSupCenterBackend.Infrasructure.Auth;
 using PsychoSupCenterBackend.Infrasructure.MongoDb;
 using PsychoSupCenterBackend.Infrasructure.Photos;
 using System.Text;
@@ -25,6 +27,10 @@ public static class DependencyInjection
         services.AddTransient<IEmailService, EmailService>();
         services.AddScoped<IPhotoService, PhotoService>();
         services.AddSingleton<IRefreshTokenRepository, MongoRefreshTokenRepository>();
+
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
+        services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
 
         var jwtSettings = new JwtSettings();
         configuration.Bind("Jwt", jwtSettings);
