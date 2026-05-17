@@ -11,8 +11,15 @@ using PsychoSupCenterBackend.Persistence;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.SignalR;
 using PsychoSupCenterBackend.Infrasructure.Auth;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3} {SourceContext} | {Message:lj}{NewLine}{Exception}")
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() 
                      ?? ["http://localhost:3000", "http://localhost:5173"];
@@ -47,6 +54,11 @@ builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(
 
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    await DbInitializer.SeedAsync(scope.ServiceProvider);
+}
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

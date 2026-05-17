@@ -23,6 +23,9 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
             .IsRequired()
             .HasMaxLength(100);
 
+        builder.Property(x => x.Age)
+            .IsRequired();
+
         builder.Property(x => x.PhoneNumber)
             .HasMaxLength(20);
 

@@ -29,7 +29,7 @@ public static class UpdateSpecialization
         public async Task<Result<SpecializationResponseDto>> Handle(
             Command request, CancellationToken cancellationToken)
         {
-            var spec = await unitOfWork.DoctorSpecializations.Query()
+            var spec = await unitOfWork.DoctorSpecializations.Query(asNoTracking: false)
                 .Include(s => s.DoctorProfiles)
                 .FirstOrDefaultAsync(s => s.Id == request.SpecializationId, cancellationToken);
 

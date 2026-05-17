@@ -35,6 +35,7 @@ public static class GetDoctorByUserId
                 FirstName: doctor.User.FirstName,
                 LastName: doctor.User.LastName,
                 Email: doctor.User.Email,
+                Age: doctor.User.Age,
                 PhotoUrl: doctor.User.PhotoUrl,
                 Bio: doctor.Bio,
                 CareerStartDate: doctor.CareerStartDate,

@@ -1,5 +1,6 @@
 ﻿using PsychoSupCenterBackend.Application.DoctorCertificates.DTOs;
 using PsychoSupCenterBackend.Application.DoctorServices.DTOs;
+using PsychoSupCenterBackend.Application.DoctorSpecializations.DTOs;
 using PsychoSupCenterBackend.Domain.Enums;
 
 namespace PsychoSupCenterBackend.Application.Doctors.DTOs;
@@ -10,6 +11,7 @@ public sealed record DoctorProfileResponseDto(
     string FirstName,
     string LastName,
     string Email,
+    int Age,
     string? PhotoUrl,
     string? Bio,
     DateTime CareerStartDate,
@@ -17,7 +19,7 @@ public sealed record DoctorProfileResponseDto(
     DoctorStatus Status,
     double AverageRating,
     DateTime UpdatedAt,
-    IReadOnlyList<string> Specializations = null!,
+    IReadOnlyList<DoctorSpecializationResponseDto> Specializations = null!,
     IReadOnlyList<DoctorServiceResponseDto> Services = null!,
     IReadOnlyList<DoctorCertificateResponseDto> Certificates = null!
 );

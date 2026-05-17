@@ -29,7 +29,7 @@ public static class RemoveSpecializationFromDoctor
         public async Task<Result<bool>> Handle(
             Command request, CancellationToken cancellationToken)
         {
-            var doctor = await unitOfWork.DoctorProfiles.Query()
+            var doctor = await unitOfWork.DoctorProfiles.Query(asNoTracking: false)
                 .Include(d => d.Specializations)
                 .FirstOrDefaultAsync(d => d.Id == request.DoctorProfileId, cancellationToken);
 

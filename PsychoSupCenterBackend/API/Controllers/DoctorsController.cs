@@ -51,6 +51,13 @@ public class DoctorsController : BaseApiController
     }
 
     [Authorize(Roles = "Admin")]
+    [HttpPost("{id}/specializations")]
+    public async Task<ActionResult<bool>> AssignSpecializations(Guid id, [FromBody] AssignSpecializationsDto dto)
+    {
+        return HandleResult(await Mediator.Send(new AssignDoctorSpecializations.Command(id, dto)));
+    }
+
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> Delete(Guid id)
     {

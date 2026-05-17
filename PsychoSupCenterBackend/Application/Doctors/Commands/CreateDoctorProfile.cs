@@ -52,6 +52,7 @@ public static class CreateDoctorProfile
                 FirstName: user.FirstName,
                 LastName: user.LastName,
                 Email: user.Email,
+                Age: user.Age,
                 PhotoUrl: user.PhotoUrl,
                 Bio: profile.Bio,
                 CareerStartDate: profile.CareerStartDate,

@@ -60,6 +60,7 @@ public static class UpdateDoctorProfile
                 FirstName: user?.FirstName ?? string.Empty,
                 LastName: user?.LastName ?? string.Empty,
                 Email: user?.Email ?? string.Empty,
+                Age: user?.Age ?? 0,
                 PhotoUrl: user?.PhotoUrl,
                 Bio: doctor.Bio,
                 CareerStartDate: doctor.CareerStartDate,

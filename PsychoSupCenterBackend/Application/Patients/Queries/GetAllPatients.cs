@@ -38,7 +38,7 @@ public static class GetAllPatients
                     p.User.Email, p.User.PhotoUrl,
                     p.Type, p.MilitaryId, p.EmergencyContact,
                     p.DateOfBirth,
-                    (int)((DateTime.UtcNow - p.DateOfBirth).TotalDays / 365.25)))
+                    p.User.Age))
                 .ToListAsync(cancellationToken);
 
             return Result<IReadOnlyList<PatientProfileResponseDto>>.Success(patients);

@@ -37,6 +37,9 @@ public static class RegisterUser
                 .NotEmpty().WithMessage("Прізвище є обов'язковим.")
                 .MaximumLength(100);
 
+            RuleFor(x => x.Dto.Age)
+                .GreaterThan(0).WithMessage("Вік є обов'язковим.");
+
             RuleFor(x => x.Dto.PhoneNumber)
                 .Matches(@"^\+?[0-9\s\-\(\)]{7,20}$")
                 .When(x => x.Dto.PhoneNumber is not null)
@@ -71,9 +74,10 @@ public static class RegisterUser
                 Email = request.Dto.Email.ToLowerInvariant(),
                 FirstName = request.Dto.FirstName,
                 LastName = request.Dto.LastName,
+                Age = request.Dto.Age,
                 PhoneNumber = request.Dto.PhoneNumber,
                 Role = request.Dto.Role,
-                IsActive = true,
+                IsActive = request.Dto.Role == UserRole.Patient, // Patient is active, Doctor awaits approval
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
             };
@@ -111,21 +115,29 @@ public static class RegisterUser
                 await unitOfWork.PatientProfiles.AddAsync(patientProfile, cancellationToken);
             }
 
-            var accessToken = jwtTokenService.GenerateAccessToken(user);
-            var refreshTokenValue = jwtTokenService.GenerateRefreshToken();
+            string? accessToken = null;
+            string? refreshTokenValue = null;
+            DateTime? accessTokenExpiresAt = null;
 
-            var refreshToken = new RefreshToken
+            if (user.IsActive)
             {
-                Id = Guid.NewGuid().ToString(),
-                Token = refreshTokenValue,
-                UserId = user.Id,
-                CreatedAt = DateTime.UtcNow,
-                ExpiresAt = DateTime.UtcNow.Add(jwtTokenService.RefreshTokenLifetime),
-                IsRevoked = false,
-                CreatedByIp = request.IpAddress
-            };
+                accessToken = jwtTokenService.GenerateAccessToken(user);
+                refreshTokenValue = jwtTokenService.GenerateRefreshToken();
+                accessTokenExpiresAt = DateTime.UtcNow.AddMinutes(15);
 
-            await refreshTokenRepository.SaveTokenAsync(refreshToken, cancellationToken);
+                var refreshToken = new RefreshToken
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Token = refreshTokenValue,
+                    UserId = user.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    ExpiresAt = DateTime.UtcNow.Add(jwtTokenService.RefreshTokenLifetime),
+                    IsRevoked = false,
+                    CreatedByIp = request.IpAddress
+                };
+
+                await refreshTokenRepository.SaveTokenAsync(refreshToken, cancellationToken);
+            }
 
             return Result<AuthResponseDto>.Success(new AuthResponseDto(
                 UserId: user.Id,
@@ -135,7 +147,7 @@ public static class RegisterUser
                 Role: user.Role.ToString(),
                 AccessToken: accessToken,
                 RefreshToken: refreshTokenValue,
-                AccessTokenExpiresAt: DateTime.UtcNow.AddMinutes(15),
+                AccessTokenExpiresAt: accessTokenExpiresAt,
                 DoctorProfileId: doctorProfileId,
                 PatientProfileId: patientProfileId
             ));

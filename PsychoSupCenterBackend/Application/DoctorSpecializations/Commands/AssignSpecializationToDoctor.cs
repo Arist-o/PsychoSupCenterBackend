@@ -32,7 +32,7 @@ public static class AssignSpecializationToDoctor
             Command request,
             CancellationToken cancellationToken)
         {
-            var doctor = await unitOfWork.DoctorProfiles.Query()
+            var doctor = await unitOfWork.DoctorProfiles.Query(asNoTracking: false)
                 .Include(d => d.Specializations)
                 .FirstOrDefaultAsync(d => d.Id == request.Dto.DoctorProfileId, cancellationToken);
 
@@ -40,7 +40,7 @@ public static class AssignSpecializationToDoctor
                 return Result<SpecializationResponseDto>.Failure(
                     $"Лікаря з Id '{request.Dto.DoctorProfileId}' не знайдено.");
 
-            var specialization = await unitOfWork.DoctorSpecializations.Query()
+            var specialization = await unitOfWork.DoctorSpecializations.Query(asNoTracking: false)
                 .Include(s => s.DoctorProfiles)
                 .FirstOrDefaultAsync(s => s.Name.ToLower() == request.Dto.Name.ToLower(), cancellationToken);
 

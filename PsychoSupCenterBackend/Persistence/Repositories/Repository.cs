@@ -44,8 +44,8 @@ internal sealed class Repository<TEntity> : IRepository<TEntity>
         CancellationToken cancellationToken = default)
         => await _dbSet.AnyAsync(predicate, cancellationToken);
 
-    public IQueryable<TEntity> Query()
-        => _dbSet.AsNoTracking();
+    public IQueryable<TEntity> Query(bool asNoTracking = true)
+        => asNoTracking ? _dbSet.AsNoTracking() : _dbSet;
 
  
     public async Task AddAsync(

@@ -6,9 +6,9 @@ public sealed record AuthResponseDto(
     string FirstName,
     string LastName,
     string Role,
-    string AccessToken,
-    string RefreshToken,
-    DateTime AccessTokenExpiresAt,
+    string? AccessToken,
+    string? RefreshToken,
+    DateTime? AccessTokenExpiresAt,
     Guid? DoctorProfileId = null,
     Guid? PatientProfileId = null
 );

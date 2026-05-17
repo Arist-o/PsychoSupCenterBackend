@@ -34,6 +34,7 @@ public static class GetUserById
                 user.Email, 
                 user.FirstName, 
                 user.LastName, 
+                user.Age,
                 user.PhoneNumber!, 
                 user.PhotoUrl, 
                 user.Role.ToString(), 

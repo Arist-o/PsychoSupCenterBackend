@@ -24,7 +24,7 @@ public interface IRepository<TEntity> where TEntity : class
         Expression<Func<TEntity, bool>> predicate,
         CancellationToken cancellationToken = default);
 
-    IQueryable<TEntity> Query();
+    IQueryable<TEntity> Query(bool asNoTracking = true);
 
     Task AddAsync(TEntity entity, CancellationToken cancellationToken = default);
     Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);

@@ -5,6 +5,7 @@ public sealed record UserResponseDto(
     string Email,
     string FirstName,
     string LastName,
+    int Age,
     string PhoneNumber,
     string? PhotoUrl,
     string Role,

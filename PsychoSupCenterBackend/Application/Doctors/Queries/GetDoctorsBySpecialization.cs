@@ -1,10 +1,12 @@
-﻿
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PsychoSupCenterBackend.Application.Common.Behaviors;
 using PsychoSupCenterBackend.Application.Common.Interfaces;
 using PsychoSupCenterBackend.Application.Common.Models;
+using PsychoSupCenterBackend.Application.DoctorCertificates.DTOs;
 using PsychoSupCenterBackend.Application.Doctors.DTOs;
+using PsychoSupCenterBackend.Application.DoctorServices.DTOs;
+using PsychoSupCenterBackend.Application.DoctorSpecializations.DTOs;
 
 namespace PsychoSupCenterBackend.Application.Doctors.Queries;
 
@@ -39,13 +41,20 @@ public static class GetDoctorsBySpecialization
                     d.User.FirstName,
                     d.User.LastName,
                     d.User.Email,
+                    d.User.Age,
                     d.User.PhotoUrl,
                     d.Bio,
                     d.CareerStartDate,
                     (int)((DateTime.UtcNow - d.CareerStartDate).TotalDays / 365.25),
                     d.Status,
                     d.AverageRating,
-                    d.UpdatedAt))
+                    d.UpdatedAt,
+                    d.Specializations.Select(s => new DoctorSpecializationResponseDto(s.Id, s.Name, s.Description)).ToList(),
+                    d.Services.Select(s => new DoctorServiceResponseDto(
+                        s.Id, s.DoctorProfileId, s.ServiceName, s.Price, s.Description, s.DurationMinutes)).ToList(),
+                    d.Certificates.Select(c => new DoctorCertificateResponseDto(
+                        c.Id, c.DoctorProfileId, c.Name, c.IssuingOrganization, c.IssueDate, c.CertificateUrl, c.AddedAt)).ToList()
+                    ))
                 .ToListAsync(cancellationToken);
 
             return Result<IReadOnlyList<DoctorProfileResponseDto>>.Success(doctors);

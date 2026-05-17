@@ -8,6 +8,7 @@ public sealed record RegisterDto(
     string Password,
     string FirstName,
     string LastName,
+    int Age,
     string? PhoneNumber,
     PatientType? PatientType,
     UserRole Role

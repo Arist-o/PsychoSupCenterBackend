@@ -7,6 +7,7 @@ using PsychoSupCenterBackend.Application.Common.Models;
 using PsychoSupCenterBackend.Application.DoctorCertificates.DTOs;
 using PsychoSupCenterBackend.Application.Doctors.DTOs;
 using PsychoSupCenterBackend.Application.DoctorServices.DTOs;
+using PsychoSupCenterBackend.Application.DoctorSpecializations.DTOs;
 
 namespace PsychoSupCenterBackend.Application.Doctors.Queries;
 
@@ -42,6 +43,7 @@ public static class GetDoctorById
                 FirstName: doctor.User.FirstName,
                 LastName: doctor.User.LastName,
                 Email: doctor.User.Email,
+                Age: doctor.User.Age,
                 PhotoUrl: doctor.User.PhotoUrl,
                 Bio: doctor.Bio,
                 CareerStartDate: doctor.CareerStartDate,
@@ -49,7 +51,7 @@ public static class GetDoctorById
                 Status: doctor.Status,
                 AverageRating: doctor.AverageRating,
                 UpdatedAt: doctor.UpdatedAt,
-                Specializations: doctor.Specializations.Select(s => s.Name).ToList(),
+                Specializations: doctor.Specializations.Select(s => new DoctorSpecializationResponseDto(s.Id, s.Name, s.Description)).ToList(),
                 Services: doctor.Services.Select(s => new DoctorServiceResponseDto(
                     s.Id, s.DoctorProfileId, s.ServiceName, s.Price, s.Description, s.DurationMinutes)).ToList(),
                 Certificates: doctor.Certificates.Select(c => new DoctorCertificateResponseDto(

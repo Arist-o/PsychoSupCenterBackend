@@ -22,4 +22,11 @@ public class AdminController : BaseApiController
     {
         return HandleResult(await Mediator.Send(new CreateAdminUser.Command(dto)));
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPut("approve-doctor/{id}")]
+    public async Task<ActionResult<bool>> ApproveDoctor(Guid id)
+    {
+        return HandleResult(await Mediator.Send(new ApproveDoctorProfile.Command(id)));
+    }
 }

@@ -31,6 +31,7 @@ public static class UpdateUser
 
             user.FirstName = request.Dto.FirstName;
             user.LastName = request.Dto.LastName;
+            user.Age = request.Dto.Age;
             user.PhoneNumber = request.Dto.PhoneNumber ?? string.Empty;
             user.PhotoUrl = request.Dto.PhotoUrl;
             user.UpdatedAt = DateTime.UtcNow;
@@ -38,7 +39,7 @@ public static class UpdateUser
             unitOfWork.Users.Update(user);
 
             return Result<UserResponseDto>.Success(new UserResponseDto(
-                user.Id, user.Email, user.FirstName, user.LastName, user.PhoneNumber, user.PhotoUrl, user.Role.ToString(), user.IsActive));
+                user.Id, user.Email, user.FirstName, user.LastName, user.Age, user.PhoneNumber, user.PhotoUrl, user.Role.ToString(), user.IsActive));
         }
     }
 }
