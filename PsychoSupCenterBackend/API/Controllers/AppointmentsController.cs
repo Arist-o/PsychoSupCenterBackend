@@ -28,6 +28,7 @@ public class AppointmentsController : BaseApiController
         return HandleResult(await Mediator.Send(new GetAppointmentsByPatientId.Query(patientProfileId, page, pageSize)));
     }
 
+    [Authorize(Roles = "Patient,Doctor")]
     [HttpPost]
     public async Task<ActionResult<AppointmentResponseDto>> Create([FromBody] CreateAppointmentDto dto)
     {

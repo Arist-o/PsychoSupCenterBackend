@@ -10,7 +10,7 @@ namespace PsychoSupCenterBackend.Application.Patients.Queries;
 
 public static class GetAllPatients
 {
-    public sealed record Query(int Page = 1, int PageSize = 20)
+    public sealed record Query(int Page = 1, int PageSize = 20, Guid? DoctorProfileId = null)
         : IQuery<Result<IReadOnlyList<PatientProfileResponseDto>>>;
 
     public sealed class Handler(IUnitOfWork unitOfWork)
@@ -19,10 +19,16 @@ public static class GetAllPatients
         public async Task<Result<IReadOnlyList<PatientProfileResponseDto>>> Handle(
             Query request, CancellationToken cancellationToken)
         {
-            var patients = await unitOfWork.PatientProfiles
-                .Query()
+            var query = unitOfWork.PatientProfiles.Query()
                 .Include(p => p.User)
-                .Where(p => p.User.IsActive)
+                .Where(p => p.User.IsActive);
+
+            if (request.DoctorProfileId.HasValue)
+            {
+                query = query.Where(p => p.Appointments.Any(a => a.DoctorProfileId == request.DoctorProfileId.Value));
+            }
+
+            var patients = await query
                 .OrderBy(p => p.User.LastName)
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)

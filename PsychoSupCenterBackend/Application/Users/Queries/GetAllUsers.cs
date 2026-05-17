@@ -16,11 +16,12 @@ public static class GetAllUsers
         public async Task<Result<IReadOnlyList<UserResponseDto>>> Handle(Query request, CancellationToken cancellationToken)
         {
             var users = await unitOfWork.Users.Query()
+                .Where(u => u.IsActive)
                 .OrderByDescending(u => u.CreatedAt)
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .Select(u => new UserResponseDto(
-                    u.Id, u.Email, u.FirstName, u.LastName, u.PhoneNumber!, u.PhotoUrl, u.Role.ToString(), u.IsActive))
+                    u.Id, u.Email, u.FirstName, u.LastName, u.PhoneNumber!, u.PhotoUrl, u.Role.ToString(), u.IsActive, u.DoctorProfile != null ? u.DoctorProfile.Id : null, u.PatientProfile != null ? u.PatientProfile.Id : null))
                 .ToListAsync(cancellationToken);
 
             return Result<IReadOnlyList<UserResponseDto>>.Success(users);

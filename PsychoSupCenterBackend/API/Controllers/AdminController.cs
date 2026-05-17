@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PsychoSupCenterBackend.Application.Admin.Commands;
 using PsychoSupCenterBackend.Application.Admin.DTOs;
 using PsychoSupCenterBackend.Application.Admin.Queries;
+using PsychoSupCenterBackend.Application.Users.DTOs;
 
 namespace PsychoSupCenterBackend.API.Controllers;
 
@@ -12,5 +14,12 @@ public class AdminController : BaseApiController
     public async Task<ActionResult<DashboardStatsDto>> GetDashboardStats()
     {
         return HandleResult(await Mediator.Send(new GetDashboardStats.Query()));
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("create-admin")]
+    public async Task<ActionResult<UserResponseDto>> CreateAdmin([FromBody] CreateAdminDto dto)
+    {
+        return HandleResult(await Mediator.Send(new CreateAdminUser.Command(dto)));
     }
 }
